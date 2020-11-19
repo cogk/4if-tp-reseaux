@@ -4,21 +4,37 @@ public class Message {
 
     private final String createdBy;
 
-    // private String destination;
+    private final String text;
 
-    private final String message;
+    private String room;
 
-    public Message(String from, String to, String message) {
+
+    public Message(String from, String text) {
         this.createdBy = from;
-        // this.destination = to;
-        this.message = message;
+        this.text = text;
+        this.room = ""; // canal principal
+    }
+
+    public Message(String from, String text, String room) {
+        this.createdBy = from;
+        this.text = text;
+        this.room = room;
     }
 
     public String getCreatedBy() {
         return createdBy;
     }
 
-    public String getMessage() {
-        return message;
+    public String getText() {
+        return text;
+    }
+
+    @Override
+    public String toString() {
+        if (room.length() == 0) {
+            return "<" + createdBy + ">: " + text;
+        } else {
+            return "<" + createdBy + "@" + room + ">: " + text;
+        }
     }
 }

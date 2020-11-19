@@ -1,13 +1,18 @@
 package client;
 
-import java.io.*;
+import modele.Message;
+import modele.Protocol;
+import modele.Rename;
 
-public class ChatClientReceiveThread extends Thread {
+import java.io.*;
+import java.util.Arrays;
+
+public class ChatClientTCPReceiveThread extends Thread {
     private final BufferedReader socketInput;
 
     private boolean shouldStop = false;
 
-    ChatClientReceiveThread(BufferedReader socketInput) throws IOException {
+    ChatClientTCPReceiveThread(BufferedReader socketInput) throws IOException {
         this.socketInput = socketInput;
     }
 
@@ -19,11 +24,7 @@ public class ChatClientReceiveThread extends Thread {
         String line = null;
         String[] arguments;
 
-        while (true) {
-            if (shouldStop) {
-                break;
-            }
-
+        while (!shouldStop) {
             try {
                 line = socketInput.readLine();
             } catch (IOException e) {
@@ -35,24 +36,19 @@ public class ChatClientReceiveThread extends Thread {
             }
 
             // Parse the input command
-            arguments = line.split("\u0000");
-            if (arguments.length == 0) {
-                continue;
-            }
+            arguments = line.split("\u0000", 2);
 
-            switch (arguments[0]) {
+            String commande = arguments.length > 0 ? arguments[0] : "";
+            String parametres = arguments.length > 1 ? arguments[1] : "";
+
+            switch (commande) {
                 case "msg":
-                    String from = arguments[1];
-                    String text = arguments[2];
-                    String room = arguments.length >= 4 ? arguments[3] : "";
-                    if (room.length() == 0) {
-                        System.out.println("<" + from + ">: " + text);
-                    } else {
-                        System.out.println("<" + from + "@" + room + ">: " + text);
-                    }
+                    Message message = Protocol.readMessage(parametres);
+                    System.out.println(message.toString());
                     break;
-                case "pseudo":
-                    System.out.println("<" + arguments[1] + "> s'est renommé <" + arguments[2] + ">");
+                case "rename":
+                    Rename rename = Protocol.readRename(parametres);
+                    System.out.println(rename.toString());
                     break;
                 case "protocol error":
                     System.err.println("Erreur de protocole");

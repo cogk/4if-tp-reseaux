@@ -8,6 +8,8 @@
 package server;
 
 import modele.Message;
+import modele.Protocol;
+import modele.Rename;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -22,76 +24,81 @@ public class ChatClientThread extends Thread {
     private BufferedReader socIn = null;
     private PrintStream socOut = null;
 
-    private String clientId = "(anonymous)";
+    private String clientId = "(anonyme)";
 
     ChatClientThread(Socket s, ChatManager chatManager) {
         this.clientSocket = s;
         this.chatManager = chatManager;
     }
 
-    /**
-     * receives a request from client then sends an echo to the client
-     */
     public void run() {
         try {
+            if (clientSocket.isClosed()) {
+                return;
+            }
+
             socIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             socOut = new PrintStream(clientSocket.getOutputStream());
 
-            while (true) {
+            while (!clientSocket.isClosed()) {
                 String line = socIn.readLine();
-                interpreter(line);
+                if (line == null) {
+                    break;
+                } else {
+                    interpreter(line);
+                }
             }
+
+            clientSocket.close();
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println("Error in ChatClientThread:" + e);
         }
     }
 
     private void interpreter(String line) {
         // Parse the input command
-        String[] arguments = line.split("\u0000");
+        String[] arguments = line.split("\u0000", 2);
 
-        if (arguments[0].equals("msg")) {
-            String text = arguments[1];
-            chatManager.pushMessage(new Message(this.clientId, "ALL", text));
-        } else if (arguments[0].equals("pseudo")) {
-            String text = arguments[1];
-            String newPseudo = text.toLowerCase().replaceAll("[^a-z0-9_-]", "");
-            chatManager.pushRename(this.clientId, newPseudo);
-            this.clientId = newPseudo;
-        } else {
-            System.err.println("Commande inconnue: " + line);
-            socOut.println("protocol error");
+        String commande = arguments.length > 0 ? arguments[0] : "";
+        String parametres = arguments.length > 1 ? arguments[1] : "";
+
+        switch (commande) {
+            case "msg":
+                Message msg = Protocol.readMessage(parametres);
+                if (msg.getCreatedBy().equals(this.clientId) || msg.getCreatedBy().length() == 0) {
+                    chatManager.pushMessage(msg);
+                } else {
+                    System.out.println("ignored msg from spoofed id " + msg.getCreatedBy());
+                }
+                break;
+            case "rename":
+                Rename rename = Protocol.readRename(parametres);
+                if (rename.getOldPseudo().equals(this.clientId) || rename.getOldPseudo().length() == 0) {
+                    String newPseudo = rename.getNewPseudo().toLowerCase().replaceAll("[^a-z0-9_-]", "");
+                    rename.setNewPseudo(newPseudo);
+                    this.clientId = newPseudo;
+                    chatManager.pushRename(rename);
+                } else {
+                    System.out.println("ignored rename from spoofed id " + rename.getOldPseudo());
+                }
+                break;
+            default:
+                System.err.println("Commande client inconnue pour le serveur: " + line.replace("\u0000", "\\0"));
+                return; // stop the thread
         }
     }
 
     public void gotMessage(Message message) {
         String from = message.getCreatedBy();
         if (from.equals(this.clientId) && !from.equals("(anonymous)")) {
-            socOut.println("msg" + "\u0000" + from + "\u0000" + message.getMessage());
+            socOut.println(Protocol.writeMessage(message));
         } else {
-            socOut.println("msg" + "\u0000" + from + "\u0000" + message.getMessage());
+            socOut.println(Protocol.writeMessage(message));
         }
     }
 
-    public void gotRename(String oldPseudo, String newPseudo) {
-        socOut.println("pseudo" + "\u0000" + oldPseudo + "\u0000" + newPseudo);
+    public void gotRename(Rename rename) {
+        socOut.println(Protocol.writeRename(rename));
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

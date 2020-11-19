@@ -42,7 +42,5 @@ public class Server {
                 System.exit(1);
                 return;
         }
-
-        chatManager.setChatServer(chatServer);
     }
 }

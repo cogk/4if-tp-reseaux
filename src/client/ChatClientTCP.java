@@ -9,7 +9,7 @@ package client;
 import java.io.*;
 import java.net.*;
 
-public class ChatClient {
+public class ChatClientTCP {
     /**
      * main method
      * accepts a connection, receives a message from client then sends an echo to the client
@@ -20,8 +20,8 @@ public class ChatClient {
         BufferedReader stdIn = null;
         BufferedReader socIn = null;
 
-        ChatClientSendThread sendThread = null;
-        ChatClientReceiveThread receiveThread = null;
+        ChatClientTCPSendThread sendThread = null;
+        ChatClientTCPReceiveThread receiveThread = null;
 
         if (args.length != 2) {
             System.out.println("Usage: java ChatClient <server host> <port>");
@@ -35,8 +35,8 @@ public class ChatClient {
             socOut = new PrintStream(socket.getOutputStream());
             stdIn = new BufferedReader(new InputStreamReader(System.in));
 
-            sendThread = new ChatClientSendThread(socOut, stdIn);
-            receiveThread = new ChatClientReceiveThread(socIn);
+            sendThread = new ChatClientTCPSendThread(socOut, stdIn);
+            receiveThread = new ChatClientTCPReceiveThread(socIn);
 
             sendThread.start();
             receiveThread.start();
@@ -54,6 +54,9 @@ public class ChatClient {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        sendThread.endThread();
+        receiveThread.endThread();
 
         socket.close();
         socIn.close();

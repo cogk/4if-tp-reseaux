@@ -1,6 +1,7 @@
 package server;
 
 import modele.Message;
+import modele.Rename;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ public class ChatManager {
         chatServer.pushMessage(msg);
     }
 
-    public void pushRename(String oldPseudo, String newPseudo) {
-        chatServer.pushRename(oldPseudo, newPseudo);
+    public void pushRename(Rename rename) {
+        chatServer.pushRename(rename);
     }
 }

@@ -1,6 +1,7 @@
 package server;
 
 import modele.Message;
+import modele.Rename;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,9 +11,15 @@ import java.util.List;
 public class ChatServerTCP implements ChatServer {
     private final List<ChatClientThread> clients = new ArrayList<>();
 
+    private final int port;
+
     public ChatServerTCP(int port, ChatManager chatManager) {
+        chatManager.setChatServer(this);
+
+        this.port = port;
+
         try {
-            ServerSocket listenSocket = new ServerSocket(); // port
+            ServerSocket listenSocket = new ServerSocket(port);
             System.out.println("Server ready...");
             while (true) {
                 Socket clientSocket = listenSocket.accept();
@@ -22,6 +29,7 @@ public class ChatServerTCP implements ChatServer {
                 ct.start();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println("Error in ChatServerTCP:" + e);
         }
     }
@@ -33,10 +41,10 @@ public class ChatServerTCP implements ChatServer {
         }
     }
 
-    public void pushRename(String oldPseudo, String newPseudo) {
+    public void pushRename(Rename rename) {
         for (int i = 0; i < clients.size(); i++) {
             ChatClientThread ct = clients.get(i);
-            ct.gotRename(oldPseudo, newPseudo);
+            ct.gotRename(rename);
         }
     }
 }

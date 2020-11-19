@@ -1,16 +1,22 @@
 package client;
 
+import modele.Message;
+import modele.Protocol;
+import modele.Rename;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintStream;
 
-public class ChatClientSendThread extends Thread {
+public class ChatClientTCPSendThread extends Thread {
     private final PrintStream socketOutput;
     private final BufferedReader terminalInput;
 
+    private String pseudo = "(anonyme)";
+
     private boolean shouldStop = false;
 
-    public ChatClientSendThread(PrintStream socketOutput, BufferedReader terminalInput) {
+    public ChatClientTCPSendThread(PrintStream socketOutput, BufferedReader terminalInput) {
         this.socketOutput = socketOutput;
         this.terminalInput = terminalInput;
     }
@@ -23,14 +29,10 @@ public class ChatClientSendThread extends Thread {
         System.out.println("Bienvenue dans l'application de chat");
         System.out.println("  Entrez du texte, puis appuyez sur <Entrée> pour envoyer un message");
         System.out.println("  Des commandes sont disponibles :");
-        System.out.println("  - /pseudo <votre nouveau pseudo>");
+        System.out.println("    /pseudo <votre nouveau pseudo>");
         System.out.println();
 
-        while (true) {
-            if (shouldStop) {
-                break;
-            }
-
+        while (!shouldStop) {
             String line = null;
             try {
                 line = terminalInput.readLine().trim();
@@ -45,10 +47,11 @@ public class ChatClientSendThread extends Thread {
             } else if (line.length() == 0) {
                 continue;
             } else if (line.startsWith("/pseudo ")) {
-                String pseudo = line.substring(8).trim();
-                socketOutput.println("pseudo" + "\u0000" + pseudo);
+                String newPseudo = line.substring(8).trim();
+                socketOutput.println(Protocol.writeRename(new Rename(pseudo, newPseudo)));
+                pseudo = newPseudo;
             } else {
-                socketOutput.println("msg" + "\u0000" + line);
+                socketOutput.println(Protocol.writeMessage(new Message(pseudo, line)));
             }
         }
     }
