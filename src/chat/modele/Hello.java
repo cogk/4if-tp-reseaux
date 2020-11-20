@@ -1,4 +1,4 @@
-package modele;
+package chat.modele;
 
 public class Hello {
     private final String initialRoom;

@@ -1,6 +1,5 @@
-package modele;
+package chat.modele;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class Message {
@@ -15,8 +14,8 @@ public class Message {
 
     /**
      * Constructeur de Message pour le canal principal (room non spécifiée)
-     * @param from Indique le client qui a écrit le message
-     * @param text Message écrit par le client
+     * @param from Indique le chat.client qui a écrit le message
+     * @param text Message écrit par le chat.client
      */
     public Message(String from, String text) {
         this.createdBy = from;
@@ -27,8 +26,8 @@ public class Message {
 
     /**
      * Constructeur de Message pour un canal spécifique
-     * @param from Indique le client qui a écrit le message
-     * @param text Message écrit par le client
+     * @param from Indique le chat.client qui a écrit le message
+     * @param text Message écrit par le chat.client
      * @param room Indique le nom de la room dans laquelle le message doit apparaître
      */
     public Message(String from, String text, String room) {

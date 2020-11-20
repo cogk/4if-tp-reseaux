@@ -1,6 +1,6 @@
 /***
  * ClientThread
- * Example of a TCP server
+ * Example of a TCP chat.server
  * Date: 14/12/08
  * Authors:
  */
@@ -19,7 +19,7 @@ public class ClientThread extends Thread {
     }
 
     /**
-     * receives a request from client then sends an echo to the client
+     * receives a request from chat.client then sends an echo to the chat.client
      */
     public void run() {
         try {

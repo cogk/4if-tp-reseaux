@@ -1,7 +1,7 @@
-package server;
+package chat.server;
 
-import modele.Message;
-import modele.Rename;
+import chat.modele.Message;
+import chat.modele.Rename;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -40,7 +40,7 @@ public class ChatServerTCP implements ChatServer {
     }
 
     /**
-     * Cette fonction permet de donner l'information de l'envoi d'un message par un client à tous les clients connectés (broadcast)
+     * Cette fonction permet de donner l'information de l'envoi d'un message par un chat.client à tous les clients connectés (broadcast)
      * @param msg Information sur le message envoyé
      */
     public void pushMessage(Message msg) {
@@ -52,7 +52,7 @@ public class ChatServerTCP implements ChatServer {
 
     /**
      * Cette fonction permet de donner l'information du rename à tous les clients connectés (broadcast)
-     * @param rename Information sur le renommage d'un client
+     * @param rename Information sur le renommage d'un chat.client
      */
     public void pushRename(Rename rename) {
         for (int i = 0; i < clients.size(); i++) {

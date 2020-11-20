@@ -1,4 +1,4 @@
-package modele;
+package chat.modele;
 
 public class Protocol {
     /**
@@ -15,7 +15,7 @@ public class Protocol {
 
     /**
      * Cette fonction permet de transformer une chaîne de caractères en un objet Message pour le transmettre à d'autres clients
-     * @param str La chaîne de caractères écrite par le client
+     * @param str La chaîne de caractères écrite par le chat.client
      * @return Un objet Message contenant les informations de la chaîne fournie en entrée
      */
     public static Message deserializeMessage(String str) {
@@ -25,7 +25,7 @@ public class Protocol {
 
     /**
      * Cette fonction transforme un objet Rename en uen chaîne de caractères équivalente
-     * @param rename Contient la demande de renommage d'un client
+     * @param rename Contient la demande de renommage d'un chat.client
      * @return La chaîne de caractères constituée des informations du type rename ainsi que des pseudonymes avant et après renommage
      */
     public static String serializeRename(Rename rename) {
@@ -34,8 +34,8 @@ public class Protocol {
 
     /**
      * Cette fonction transforme une chaine de caractères représentant une demande de renommage en l'objet Rename correspondant
-     * @param str La chaîne écrite par le client pour demander un renommage
-     * @return L'objet Rename à exploiter pour changer le pseudonyme du client
+     * @param str La chaîne écrite par le chat.client pour demander un renommage
+     * @return L'objet Rename à exploiter pour changer le pseudonyme du chat.client
      */
     public static Rename deserializeRename(String str) {
         String[] segments = str.split("\u0000");

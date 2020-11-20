@@ -1,9 +1,9 @@
-package client;
+package chat.client;
 
-import modele.Hello;
-import modele.Message;
-import modele.Protocol;
-import modele.Rename;
+import chat.modele.Hello;
+import chat.modele.Message;
+import chat.modele.Protocol;
+import chat.modele.Rename;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class ChatClientUDPSendThread extends Thread {
     private String room = "";
 
     /**
-     * Constructeur de thread d'envoi client
+     * Constructeur de thread d'envoi chat.client
      * @param socket Information sur la socket utilisée par le thread pour envoyer des messages
      * @param terminalInput Terminal pour la lecture des messages
      * @param serverAddress Adresse du serveur utilisé

@@ -1,10 +1,10 @@
 /***
  * EchoClient
- * Example of a TCP client
+ * Example of a TCP chat.client
  * Date: 10/01/04
  * Authors:
  */
-package client;
+package chat.client;
 
 import java.io.*;
 import java.net.*;
@@ -12,7 +12,7 @@ import java.net.*;
 public class ChatClientTCP {
     /**
      * main method
-     * accepts a connection, receives a message from client then sends an echo to the client
+     * accepts a connection, receives a message from chat.client then sends an echo to the chat.client
      **/
     public static void main(String[] args) throws IOException {
         Socket socket = null;
@@ -24,7 +24,7 @@ public class ChatClientTCP {
         ChatClientTCPReceiveThread receiveThread = null;
 
         if (args.length != 2) {
-            System.out.println("Usage: java ChatClient <server host> <port>");
+            System.out.println("Usage: java ChatClient <chat.server host> <port>");
             System.exit(1);
         }
 

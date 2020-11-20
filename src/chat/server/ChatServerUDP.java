@@ -1,9 +1,9 @@
-package server;
+package chat.server;
 
-import modele.Hello;
-import modele.Message;
-import modele.Protocol;
-import modele.Rename;
+import chat.modele.Hello;
+import chat.modele.Message;
+import chat.modele.Protocol;
+import chat.modele.Rename;
 
 import java.io.IOException;
 import java.net.*;

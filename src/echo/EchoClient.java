@@ -1,6 +1,6 @@
 /***
  * EchoClient
- * Example of a TCP client 
+ * Example of a TCP chat.client
  * Date: 10/01/04
  * Authors:
  */
@@ -15,7 +15,7 @@ public class EchoClient {
 
     /**
      * main method
-     * accepts a connection, receives a message from client then sends an echo to the client
+     * accepts a connection, receives a message from chat.client then sends an echo to the chat.client
      **/
     public static void main(String[] args) throws IOException {
 

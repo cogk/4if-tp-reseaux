@@ -1,6 +1,6 @@
 /***
  * EchoServer
- * Example of a TCP server
+ * Example of a TCP chat.server
  * Date: 10/01/04
  * Authors:
  */

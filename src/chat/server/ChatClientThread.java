@@ -1,15 +1,15 @@
 /***
  * ClientThread
- * Example of a TCP server
+ * Example of a TCP chat.server
  * Date: 14/12/08
  * Authors:
  */
 
-package server;
+package chat.server;
 
-import modele.Message;
-import modele.Protocol;
-import modele.Rename;
+import chat.modele.Message;
+import chat.modele.Protocol;
+import chat.modele.Rename;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -27,7 +27,7 @@ public class ChatClientThread extends Thread {
     private String clientId = "(anonyme)";
 
     /**
-     * Constructeur de thread de chat pour le client côté serveur
+     * Constructeur de thread de chat pour le chat.client côté serveur
      * @param s Information sur la socket utilisée pour transmettre des messages et demandes de renommage
      * @param chatManager Permet de connaître le chat manager qui gère le stockage de l'historique des messages
      */
@@ -62,8 +62,8 @@ public class ChatClientThread extends Thread {
     }
 
     /**
-     * Cette fonction permet d'interpréter la ligne écrite par le client et d'agir en fonction du type (msg : message; rename : demande de renommage)
-     * @param line Ligne écrite par un client
+     * Cette fonction permet d'interpréter la ligne écrite par le chat.client et d'agir en fonction du type (msg : message; rename : demande de renommage)
+     * @param line Ligne écrite par un chat.client
      */
     private void interpreter(String line) {
         // Parse the input command
@@ -93,7 +93,7 @@ public class ChatClientThread extends Thread {
                 }
                 break;
             default:
-                System.err.println("Commande client inconnue pour le serveur: " + line.replace("\u0000", "\\0"));
+                System.err.println("Commande chat.client inconnue pour le serveur: " + line.replace("\u0000", "\\0"));
                 break; // stop the thread
         }
     }

@@ -1,6 +1,6 @@
 /***
  * EchoServer
- * Example of a TCP server
+ * Example of a TCP chat.server
  * Date: 10/01/04
  * Authors:
  */
@@ -13,9 +13,9 @@ import java.net.*;
 public class EchoServer {
 
     /**
-     * receives a request from client then sends an echo to the client
+     * receives a request from chat.client then sends an echo to the chat.client
      *
-     * @param clientSocket the client socket
+     * @param clientSocket the chat.client socket
      **/
     static void doService(Socket clientSocket) {
         try {

@@ -1,24 +1,20 @@
 /***
  * EchoClient
- * Example of a TCP client
+ * Example of a TCP chat.client
  * Date: 10/01/04
  * Authors:
  */
-package client;
-
-import modele.Message;
-import modele.Protocol;
+package chat.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.net.*;
 
 public class ChatClientUDP {
     /**
      * main method
-     * accepts a connection, receives a message from client then sends an echo to the client
+     * accepts a connection, receives a message from chat.client then sends an echo to the chat.client
      **/
     public static void main(String[] args) throws IOException {
         int serverPort;
@@ -32,7 +28,7 @@ public class ChatClientUDP {
         ChatClientUDPReceiveThread receiveThread = null;
 
         if (args.length != 2) {
-            System.out.println("Usage: java ChatClientUDP <server host> <port>");
+            System.out.println("Usage: java ChatClientUDP <chat.server host> <port>");
             System.exit(1);
         }
 

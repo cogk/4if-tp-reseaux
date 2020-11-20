@@ -1,7 +1,7 @@
-package server;
+package chat.server;
 
-import modele.Message;
-import modele.Rename;
+import chat.modele.Message;
+import chat.modele.Rename;
 
 import java.util.ArrayList;
 import java.util.List;

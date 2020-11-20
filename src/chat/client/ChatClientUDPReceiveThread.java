@@ -1,23 +1,25 @@
-package client;
+package chat.client;
 
-import modele.Message;
-import modele.Protocol;
-import modele.Rename;
+import chat.modele.Message;
+import chat.modele.Protocol;
+import chat.modele.Rename;
 
-import java.io.*;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 
-public class ChatClientTCPReceiveThread extends Thread {
-    private final BufferedReader socketInput;
+public class ChatClientUDPReceiveThread extends Thread {
+    private final DatagramSocket socket;
 
     private boolean shouldStop = false;
 
     /**
-     * Constructeur de thread de réception client
-     * @param socketInput Information sur la socket utilisée par le thread pour recevoir des messages
+     * Constructeur de thread de réception chat.client
+     * @param socket Information sur la socket utilisée par le thread pour recevoir des messages
      * @throws IOException Exception sur les IOStreams
      */
-    public ChatClientTCPReceiveThread(BufferedReader socketInput) throws IOException {
-        this.socketInput = socketInput;
+    public ChatClientUDPReceiveThread(DatagramSocket socket) throws IOException {
+        this.socket = socket;
     }
 
     /**
@@ -31,16 +33,21 @@ public class ChatClientTCPReceiveThread extends Thread {
         String line = null;
         String[] arguments;
 
+        byte[] buffer = new byte[1024];
         while (!shouldStop) {
+            DatagramPacket incomingDatagramPacket = new DatagramPacket(buffer, buffer.length);
+
             try {
-                line = socketInput.readLine();
+                socket.receive(incomingDatagramPacket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            if (line == null) {
-                continue;
-            }
+            line = new String(
+                    incomingDatagramPacket.getData(),
+                    incomingDatagramPacket.getOffset(),
+                    incomingDatagramPacket.getLength()
+            );
 
             // Parse the input command
             arguments = line.split("\u0000", 2);

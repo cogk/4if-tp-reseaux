@@ -1,8 +1,8 @@
-package client;
+package chat.client;
 
-import modele.Message;
-import modele.Protocol;
-import modele.Rename;
+import chat.modele.Message;
+import chat.modele.Protocol;
+import chat.modele.Rename;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +17,7 @@ public class ChatClientTCPSendThread extends Thread {
     private boolean shouldStop = false;
 
     /**
-     * Constructeur de thread d'envoi client
+     * Constructeur de thread d'envoi chat.client
      * @param socketOutput Information sur la socket utilisée par le thread pour envoyer des messages
      * @param terminalInput Terminal pour la lecture des messages
      */
