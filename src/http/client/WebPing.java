@@ -5,9 +5,8 @@ import java.net.Socket;
 
 public class WebPing {
     public static void main(String[] args) {
-
         if (args.length != 2) {
-            System.err.println("Usage java WebPing <chat.server host name> <chat.server port number>");
+            System.err.println("Usage java WebPing <host name> <port number>");
             return;
         }
 
@@ -23,8 +22,8 @@ public class WebPing {
             System.out.println("Connected to " + addr);
             sock.close();
         } catch (java.io.IOException e) {
-            System.out.println("Can't connect to " + httpServerHost + ":" + httpServerPort);
-            System.out.println(e);
+            System.err.println("Can't connect to " + httpServerHost + ":" + httpServerPort);
+            System.err.println(e);
         }
     }
 }
