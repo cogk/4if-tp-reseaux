@@ -7,6 +7,7 @@
 
 package chat.server;
 
+import chat.modele.Hello;
 import chat.modele.Message;
 import chat.modele.Protocol;
 import chat.modele.Rename;
@@ -15,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.List;
 
 public class ChatClientThread extends Thread {
 
@@ -27,7 +29,7 @@ public class ChatClientThread extends Thread {
     private String clientId = "(anonyme)";
 
     /**
-     * Constructeur de thread de chat pour le chat.client côté serveur
+     * Constructeur de thread de chat pour le client côté serveur
      * @param s Information sur la socket utilisée pour transmettre des messages et demandes de renommage
      * @param chatManager Permet de connaître le chat manager qui gère le stockage de l'historique des messages
      */
@@ -75,25 +77,26 @@ public class ChatClientThread extends Thread {
         switch (commande) {
             case "M":
                 Message msg = Protocol.deserializeMessage(parametres);
-                if (msg.getCreatedBy().equals(this.clientId) || msg.getCreatedBy().length() == 0) {
-                    chatManager.pushMessage(msg);
-                } else {
-                    System.out.println("ignored msg from spoofed id " + msg.getCreatedBy());
-                }
+                chatManager.pushMessage(msg);
                 break;
             case "R":
                 Rename rename = Protocol.deserializeRename(parametres);
-                if (rename.getOldPseudo().equals(this.clientId) || rename.getOldPseudo().length() == 0) {
-                    String newPseudo = rename.getNewPseudo().toLowerCase().replaceAll("[^a-z0-9_-]", "");
-                    rename.setNewPseudo(newPseudo);
-                    this.clientId = newPseudo;
-                    chatManager.pushRename(rename);
-                } else {
-                    System.out.println("ignored rename from spoofed id " + rename.getOldPseudo());
+                String newPseudo = rename.getNewPseudo().replaceAll("[^a-zA-Z0-9_-]", "");
+                rename.setNewPseudo(newPseudo);
+                this.clientId = newPseudo;
+                chatManager.pushRename(rename);
+                break;
+            case "H":
+                Hello hello = Protocol.deserializeHello(parametres);
+                this.clientId = hello.getInitialPseudo();
+                List<Message> messages = chatManager.getMessagesByRoom(hello.getInitialRoom());
+                for (Message message : messages) {
+                    socOut.println(Protocol.serializeMessage(message));
                 }
+                chatManager.pushMessage(new Message("~server~", this.clientId + " vient d'arriver sur le serveur."));
                 break;
             default:
-                System.err.println("Commande chat.client inconnue pour le serveur: " + line.replace("\u0000", "\\0"));
+                System.err.println("Commande client inconnue pour le serveur: " + line.replace("\u0000", "\\0"));
                 break; // stop the thread
         }
     }
@@ -104,7 +107,8 @@ public class ChatClientThread extends Thread {
      */
     public void gotMessage(Message message) {
         String from = message.getCreatedBy();
-        if (!from.equals(this.clientId) && from.startsWith("(")){
+        boolean isMyMessage = from.equals(this.clientId) && !this.clientId.startsWith("(");
+        if (!isMyMessage){
             socOut.println(Protocol.serializeMessage(message));
         }
     }

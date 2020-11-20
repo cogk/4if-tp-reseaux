@@ -14,8 +14,8 @@ public class ChatManager {
     private ChatServer chatServer;
 
     public ChatManager() {
-        messages.add(new Message("SERVER", "Bonjour et bienvenue dans le serveur"));
-        messages.add(new Message("SERVER", "Rendez-vous dans la room #help si vous avez besoin d'aide"));
+        messages.add(new Message("~server~", "Bonjour et bienvenue sur le serveur"));
+        messages.add(new Message("~server~", "Rendez-vous dans la room #help si vous avez besoin d'aide (tapez /room help)"));
     }
 
     public void setChatServer(ChatServer chatServer) {

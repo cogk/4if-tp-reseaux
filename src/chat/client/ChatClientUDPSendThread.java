@@ -45,15 +45,23 @@ public class ChatClientUDPSendThread extends Thread {
 
     public void run() {
         System.out.println("Bienvenue dans l'application de chat");
-        System.out.println("  Entrez du texte, puis appuyez sur <Entrée> pour envoyer un message");
-        System.out.println("  Des commandes sont disponibles :");
-        System.out.println("    /quit    -- quitter l'application");
-        System.out.println("    /pseudo <nouveau pseudo>    -- changer votre pseudonyme");
-        System.out.println("    /room <nom de la salle de discussion>    -- changer de salle de discussion");
+        System.out.println("Entrez du texte, puis appuyez sur <Entrée> pour envoyer un message");
+        System.out.println("Des commandes sont disponibles :");
+        System.out.println("  /quit    -- quitter l'application");
+        System.out.println("  /pseudo <nouveau pseudo>    -- changer votre pseudonyme");
+        System.out.println("  /room <nom de la salle de discussion>    -- changer de salle de discussion");
         System.out.println();
 
+        System.out.println("Veuillez entrer votre pseudo :");
         try {
-            send(Protocol.serializeHello(new Hello(room)));
+            pseudo = terminalInput.readLine().trim();
+        } catch (IOException e) {
+            System.out.println("* Erreur");
+            return;
+        }
+
+        try {
+            send(Protocol.serializeHello(new Hello(room, pseudo)));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,10 +80,11 @@ public class ChatClientUDPSendThread extends Thread {
                     System.out.println("* Déconnexion");
                     break;
                 } else if (line.startsWith("/pseudo ")) {
-                    String newPseudo = line.substring(8).trim();
+                    String newPseudo = line.substring(8).replaceAll("[^a-zA-Z0-9_-]", "");
                     send(Protocol.serializeRename(new Rename(pseudo, newPseudo)));
                     pseudo = newPseudo;
-                } else if (line.startsWith("/room ")) {
+                    System.out.println("Votre nouveau pseudo est <" + newPseudo + ">");
+                } else if (line.startsWith("/room ") || line.equals("/room")) {
                     String newRoom = line.substring(6).trim();
                     if (room.equals(newRoom)) {
                         System.out.println("* Commande ignorée");
@@ -90,7 +99,9 @@ public class ChatClientUDPSendThread extends Thread {
                 } else {
                     if (line.length() > 0) {
                         // Il s'agit d'un message textuel
-                        send(Protocol.serializeMessage(new Message(pseudo, line, room)));
+                        Message message = new Message(pseudo, line, room);
+                        System.out.println(message);
+                        send(Protocol.serializeMessage(message));
                     }
                 }
             }

@@ -6,6 +6,8 @@
  */
 package chat.client;
 
+import chat.modele.ChatClientState;
+
 import java.io.*;
 import java.net.*;
 
@@ -23,6 +25,8 @@ public class ChatClientTCP {
         ChatClientTCPSendThread sendThread = null;
         ChatClientTCPReceiveThread receiveThread = null;
 
+        ChatClientState etatDuClient = new ChatClientState();
+
         if (args.length != 2) {
             System.out.println("Usage: java ChatClient <chat.server host> <port>");
             System.exit(1);
@@ -35,17 +39,17 @@ public class ChatClientTCP {
             socOut = new PrintStream(socket.getOutputStream());
             stdIn = new BufferedReader(new InputStreamReader(System.in));
 
-            sendThread = new ChatClientTCPSendThread(socOut, stdIn);
-            receiveThread = new ChatClientTCPReceiveThread(socIn);
+            sendThread = new ChatClientTCPSendThread(socOut, stdIn, etatDuClient);
+            receiveThread = new ChatClientTCPReceiveThread(socIn, etatDuClient);
 
             sendThread.start();
             receiveThread.start();
         } catch (UnknownHostException e) {
-            System.err.println("Don't know about host: " + args[0]);
+            System.err.println("Erreur: Hôte inconnu: " + args[0]);
             System.exit(1);
         } catch (IOException e) {
-            System.err.println("Couldn't get I/O for the connection to: " + args[0]);
-            System.exit(1);
+            System.err.println("Erreur: Impossible d'établir la connexion avec le serveur " + args[0]);
+            System.exit(2);
         }
 
         try {

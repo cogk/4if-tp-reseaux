@@ -98,16 +98,14 @@ public class ChatServerUDP implements ChatServer {
                 break;
             case "H":
                 Hello hello = Protocol.deserializeHello(parametres);
-                System.err.println("Hello/" + hello.getInitialRoom());
+                System.out.println("Hello/" + hello.getInitialRoom());
                 List<Message> messages = chatManager.getMessagesByRoom(hello.getInitialRoom());
-                for (var m : messages) System.out.println("H -> " + m);
-                if (messages.size() > 0) {
+                for (Message m : messages) {
                     reply(
-                            Protocol.serializeMessage(messages.get(0)),
+                            Protocol.serializeMessage(m),
                             incomingDatagramPacket.getAddress(),
                             incomingDatagramPacket.getPort()
                     );
-                    sendBroadcast(Protocol.serializeMessage(messages.get(1)));
                 }
                 break;
             default:

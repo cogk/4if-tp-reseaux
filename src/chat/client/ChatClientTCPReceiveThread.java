@@ -1,5 +1,6 @@
 package chat.client;
 
+import chat.modele.ChatClientState;
 import chat.modele.Message;
 import chat.modele.Protocol;
 import chat.modele.Rename;
@@ -8,6 +9,7 @@ import java.io.*;
 
 public class ChatClientTCPReceiveThread extends Thread {
     private final BufferedReader socketInput;
+    private final ChatClientState chatClientState;
 
     private boolean shouldStop = false;
 
@@ -16,8 +18,12 @@ public class ChatClientTCPReceiveThread extends Thread {
      * @param socketInput Information sur la socket utilisée par le thread pour recevoir des messages
      * @throws IOException Exception sur les IOStreams
      */
-    public ChatClientTCPReceiveThread(BufferedReader socketInput) throws IOException {
+    public ChatClientTCPReceiveThread(
+            BufferedReader socketInput,
+            ChatClientState chatClientState
+    ) {
         this.socketInput = socketInput;
+        this.chatClientState = chatClientState;
     }
 
     /**
@@ -51,7 +57,9 @@ public class ChatClientTCPReceiveThread extends Thread {
             switch (commande) {
                 case "M":
                     Message message = Protocol.deserializeMessage(parametres);
-                    System.out.println(message.toString());
+                    if (chatClientState.getRoom().equals(message.getRoom())) {
+                        System.out.println(message.toString());
+                    }
                     break;
                 case "R":
                     Rename rename = Protocol.deserializeRename(parametres);
