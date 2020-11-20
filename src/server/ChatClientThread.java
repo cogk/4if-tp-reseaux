@@ -65,7 +65,7 @@ public class ChatClientThread extends Thread {
 
         switch (commande) {
             case "msg":
-                Message msg = Protocol.readMessage(parametres);
+                Message msg = Protocol.deserializeMessage(parametres);
                 if (msg.getCreatedBy().equals(this.clientId) || msg.getCreatedBy().length() == 0) {
                     chatManager.pushMessage(msg);
                 } else {
@@ -73,7 +73,7 @@ public class ChatClientThread extends Thread {
                 }
                 break;
             case "rename":
-                Rename rename = Protocol.readRename(parametres);
+                Rename rename = Protocol.deserializeRename(parametres);
                 if (rename.getOldPseudo().equals(this.clientId) || rename.getOldPseudo().length() == 0) {
                     String newPseudo = rename.getNewPseudo().toLowerCase().replaceAll("[^a-z0-9_-]", "");
                     rename.setNewPseudo(newPseudo);
@@ -92,13 +92,13 @@ public class ChatClientThread extends Thread {
     public void gotMessage(Message message) {
         String from = message.getCreatedBy();
         if (from.equals(this.clientId) && !from.equals("(anonymous)")) {
-            socOut.println(Protocol.writeMessage(message));
+            socOut.println(Protocol.serializeMessage(message));
         } else {
-            socOut.println(Protocol.writeMessage(message));
+            socOut.println(Protocol.serializeMessage(message));
         }
     }
 
     public void gotRename(Rename rename) {
-        socOut.println(Protocol.writeRename(rename));
+        socOut.println(Protocol.serializeRename(rename));
     }
 }

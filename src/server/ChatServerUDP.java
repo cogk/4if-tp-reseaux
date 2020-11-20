@@ -68,12 +68,12 @@ public class ChatServerUDP implements ChatServer {
 
         switch (commande) {
             case "msg":
-                Message message = Protocol.readMessage(parametres);
-                sendBroadcast(Protocol.writeMessage(message));
+                Message message = Protocol.deserializeMessage(parametres);
+                sendBroadcast(Protocol.serializeMessage(message));
                 break;
             case "rename":
-                Rename rename = Protocol.readRename(parametres);
-                sendBroadcast(Protocol.writeRename(rename));
+                Rename rename = Protocol.deserializeRename(parametres);
+                sendBroadcast(Protocol.serializeRename(rename));
                 break;
             default:
                 System.err.println("? " + line.replace("\u0000", "\\0"));

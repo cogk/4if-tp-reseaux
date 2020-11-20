@@ -4,7 +4,6 @@ import modele.Message;
 import modele.Protocol;
 import modele.Rename;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -14,7 +13,7 @@ public class ChatClientUDPReceiveThread extends Thread {
 
     private boolean shouldStop = false;
 
-    ChatClientUDPReceiveThread(DatagramSocket socket) throws IOException {
+    public ChatClientUDPReceiveThread(DatagramSocket socket) throws IOException {
         this.socket = socket;
     }
 
@@ -50,11 +49,11 @@ public class ChatClientUDPReceiveThread extends Thread {
 
             switch (commande) {
                 case "msg":
-                    Message message = Protocol.readMessage(parametres);
+                    Message message = Protocol.deserializeMessage(parametres);
                     System.out.println(message.toString());
                     break;
                 case "rename":
-                    Rename rename = Protocol.readRename(parametres);
+                    Rename rename = Protocol.deserializeRename(parametres);
                     System.out.println(rename.toString());
                     break;
                 case "protocol error":

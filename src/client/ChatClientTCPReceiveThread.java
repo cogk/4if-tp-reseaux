@@ -5,14 +5,13 @@ import modele.Protocol;
 import modele.Rename;
 
 import java.io.*;
-import java.util.Arrays;
 
 public class ChatClientTCPReceiveThread extends Thread {
     private final BufferedReader socketInput;
 
     private boolean shouldStop = false;
 
-    ChatClientTCPReceiveThread(BufferedReader socketInput) throws IOException {
+    public ChatClientTCPReceiveThread(BufferedReader socketInput) throws IOException {
         this.socketInput = socketInput;
     }
 
@@ -43,11 +42,11 @@ public class ChatClientTCPReceiveThread extends Thread {
 
             switch (commande) {
                 case "msg":
-                    Message message = Protocol.readMessage(parametres);
+                    Message message = Protocol.deserializeMessage(parametres);
                     System.out.println(message.toString());
                     break;
                 case "rename":
-                    Rename rename = Protocol.readRename(parametres);
+                    Rename rename = Protocol.deserializeRename(parametres);
                     System.out.println(rename.toString());
                     break;
                 case "protocol error":
