@@ -16,6 +16,11 @@ public class ChatServerUDP implements ChatServer {
     private DatagramSocket socket;
     //private MulticastSocket socket;
 
+    /**
+     * Cette fonction simule le serveur central qui gère l'échange de messages et le renommage des clients en UDP
+     * @param port Port du serveur
+     * @param chatManager Permet de connaître le chat manager qui gère le stockage de l'historique des messages
+     */
     public ChatServerUDP(int port, ChatManager chatManager) {
         chatManager.setChatServer(this);
 
@@ -51,6 +56,10 @@ public class ChatServerUDP implements ChatServer {
         }
     }
 
+    /**
+     * Cette fonction permet de traiter les informations fournies sur les messages et les demandes de renommage
+     * @param incomingDatagramPacket Informations à traiter par le serveur
+     */
     private void onData(DatagramPacket incomingDatagramPacket) {
         String line = new String(
                 incomingDatagramPacket.getData(),

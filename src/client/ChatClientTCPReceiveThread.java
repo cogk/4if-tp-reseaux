@@ -13,7 +13,7 @@ public class ChatClientTCPReceiveThread extends Thread {
 
     /**
      * Constructeur de thread de réception client
-     * @param socketInput Information de la socket utilisée par le thread pour recevoir des messages
+     * @param socketInput Information sur la socket utilisée par le thread pour recevoir des messages
      * @throws IOException Exception sur les IOStreams
      */
     public ChatClientTCPReceiveThread(BufferedReader socketInput) throws IOException {

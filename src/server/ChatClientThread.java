@@ -26,7 +26,12 @@ public class ChatClientThread extends Thread {
 
     private String clientId = "(anonyme)";
 
-    ChatClientThread(Socket s, ChatManager chatManager) {
+    /**
+     * Constructeur de thread de chat pour le client côté serveur
+     * @param s Information sur la socket utilisée pour transmettre des messages et demandes de renommage
+     * @param chatManager Permet de connaître le chat manager qui gère le stockage de l'historique des messages
+     */
+    public ChatClientThread(Socket s, ChatManager chatManager) {
         this.clientSocket = s;
         this.chatManager = chatManager;
     }
@@ -56,6 +61,10 @@ public class ChatClientThread extends Thread {
         }
     }
 
+    /**
+     * Cette fonction permet d'interpréter la ligne écrite par le client et d'agir en fonction du type (msg : message; rename : demande de renommage)
+     * @param line Ligne écrite par un client
+     */
     private void interpreter(String line) {
         // Parse the input command
         String[] arguments = line.split("\u0000", 2);
@@ -89,6 +98,10 @@ public class ChatClientThread extends Thread {
         }
     }
 
+    /**
+     *
+     * @param message
+     */
     public void gotMessage(Message message) {
         String from = message.getCreatedBy();
         if (from.equals(this.clientId) && !from.equals("(anonymous)")) {
@@ -98,6 +111,10 @@ public class ChatClientThread extends Thread {
         }
     }
 
+    /**
+     * Cette fonction permet d'afficher
+     * @param rename
+     */
     public void gotRename(Rename rename) {
         socOut.println(Protocol.serializeRename(rename));
     }

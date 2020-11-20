@@ -13,6 +13,11 @@ public class ChatServerTCP implements ChatServer {
 
     private final int port;
 
+    /**
+     * Cette fonction simule le serveur central qui gère l'échange de messages et le renommage des clients en TCP
+     * @param port Port du serveur
+     * @param chatManager Permet de connaître le chat manager qui gère le stockage de l'historique des messages
+     */
     public ChatServerTCP(int port, ChatManager chatManager) {
         chatManager.setChatServer(this);
 
@@ -34,6 +39,10 @@ public class ChatServerTCP implements ChatServer {
         }
     }
 
+    /**
+     * Cette fonction permet de donner l'information de l'envoi d'un message par un client à tous les clients connectés (broadcast)
+     * @param msg Information sur le message envoyé
+     */
     public void pushMessage(Message msg) {
         for (int i = 0; i < clients.size(); i++) {
             ChatClientThread ct = clients.get(i);
@@ -41,6 +50,10 @@ public class ChatServerTCP implements ChatServer {
         }
     }
 
+    /**
+     * Cette fonction permet de donner l'information du rename à tous les clients connectés (broadcast)
+     * @param rename Information sur le renommage d'un client
+     */
     public void pushRename(Rename rename) {
         for (int i = 0; i < clients.size(); i++) {
             ChatClientThread ct = clients.get(i);

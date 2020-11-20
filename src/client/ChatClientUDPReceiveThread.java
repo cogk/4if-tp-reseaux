@@ -15,7 +15,7 @@ public class ChatClientUDPReceiveThread extends Thread {
 
     /**
      * Constructeur de thread de réception client
-     * @param socket Information de la socket utilisée par le thread pour recevoir des messages
+     * @param socket Information sur la socket utilisée par le thread pour recevoir des messages
      * @throws IOException Exception sur les IOStreams
      */
     public ChatClientUDPReceiveThread(DatagramSocket socket) throws IOException {

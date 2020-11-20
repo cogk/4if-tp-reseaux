@@ -22,7 +22,7 @@ public class ChatClientUDPSendThread extends Thread {
 
     /**
      * Constructeur de thread d'envoi client
-     * @param socket Information de la socket utilisée par le thread pour envoyer des messages
+     * @param socket Information sur la socket utilisée par le thread pour envoyer des messages
      * @param terminalInput Terminal pour la lecture des messages
      * @param serverAddress Adresse du serveur utilisé
      * @param serverPort Port du serveur utilisé

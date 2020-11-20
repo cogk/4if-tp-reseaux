@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatManager {
+    /**
+     * Liste des messages envoyés représentant l'historique des messages du chat
+     * **/
     private List<Message> messages = new ArrayList<>();
     private ChatServer chatServer;
 
