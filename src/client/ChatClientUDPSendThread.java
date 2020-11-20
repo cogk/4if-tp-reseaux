@@ -20,6 +20,13 @@ public class ChatClientUDPSendThread extends Thread {
     private final InetAddress serverAddress;
     private final int serverPort;
 
+    /**
+     * Constructeur de thread d'envoi client
+     * @param socket Information de la socket utilisée par le thread pour envoyer des messages
+     * @param terminalInput Terminal pour la lecture des messages
+     * @param serverAddress Adresse du serveur utilisé
+     * @param serverPort Port du serveur utilisé
+     */
     public ChatClientUDPSendThread(DatagramSocket socket, BufferedReader terminalInput, InetAddress serverAddress, int serverPort) {
         this.socket = socket;
         this.terminalInput = terminalInput;
@@ -27,6 +34,9 @@ public class ChatClientUDPSendThread extends Thread {
         this.serverPort = serverPort;
     }
 
+    /**
+     * Cette fonction donne l'information de demande d'arrêt du thread en modifiant shouldStop
+     */
     public void endThread() {
         shouldStop = true;
     }

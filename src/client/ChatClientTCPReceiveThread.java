@@ -11,10 +11,18 @@ public class ChatClientTCPReceiveThread extends Thread {
 
     private boolean shouldStop = false;
 
+    /**
+     * Constructeur de thread de réception client
+     * @param socketInput Information de la socket utilisée par le thread pour recevoir des messages
+     * @throws IOException Exception sur les IOStreams
+     */
     public ChatClientTCPReceiveThread(BufferedReader socketInput) throws IOException {
         this.socketInput = socketInput;
     }
 
+    /**
+     * Cette fonction donne l'information de demande d'arrêt du thread en modifiant shouldStop
+     */
     public void endThread() {
         shouldStop = true;
     }

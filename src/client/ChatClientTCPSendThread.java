@@ -16,11 +16,19 @@ public class ChatClientTCPSendThread extends Thread {
 
     private boolean shouldStop = false;
 
+    /**
+     * Constructeur de thread d'envoi client
+     * @param socketOutput Information de la socket utilisée par le thread pour envoyer des messages
+     * @param terminalInput Terminal pour la lecture des messages
+     */
     public ChatClientTCPSendThread(PrintStream socketOutput, BufferedReader terminalInput) {
         this.socketOutput = socketOutput;
         this.terminalInput = terminalInput;
     }
 
+    /**
+     * Cette fonction donne l'information de demande d'arrêt du thread en modifiant shouldStop
+     */
     public void endThread() {
         shouldStop = true;
     }
