@@ -5,6 +5,11 @@ public class Rename {
 
     private String newPseudo;
 
+    /**
+     * Constructeur de Rename
+     * @param oldPseudo Ancien pseudonyme du client
+     * @param newPseudo Nouveau pseudonyme demandé par le client
+     */
     public Rename(String oldPseudo, String newPseudo) {
         this.oldPseudo = oldPseudo;
         this.newPseudo = newPseudo;
