@@ -1,5 +1,6 @@
 package server;
 
+import modele.Hello;
 import modele.Message;
 import modele.Protocol;
 import modele.Rename;
@@ -7,6 +8,7 @@ import modele.Rename;
 import java.io.IOException;
 import java.net.*;
 import java.util.Enumeration;
+import java.util.List;
 
 public class ChatServerUDP implements ChatServer {
     /**
@@ -15,6 +17,7 @@ public class ChatServerUDP implements ChatServer {
     private final int serverPort;
     private DatagramSocket socket;
     //private MulticastSocket socket;
+    private final ChatManager chatManager;
 
     /**
      * Cette fonction simule le serveur central qui gère l'échange de messages et le renommage des clients en UDP
@@ -22,6 +25,7 @@ public class ChatServerUDP implements ChatServer {
      * @param chatManager Permet de connaître le chat manager qui gère le stockage de l'historique des messages
      */
     public ChatServerUDP(int port, ChatManager chatManager) {
+        this.chatManager = chatManager;
         chatManager.setChatServer(this);
 
         this.serverPort = port;
@@ -67,8 +71,10 @@ public class ChatServerUDP implements ChatServer {
                 incomingDatagramPacket.getLength()
         );
 
-        System.out.println(incomingDatagramPacket.getAddress()
-                + ":" + incomingDatagramPacket.getPort() + " > " + line);
+        System.out.println("> " + line.replace("\u0000", "\\0"));
+
+        /*System.out.println(incomingDatagramPacket.getAddress()
+                + ":" + incomingDatagramPacket.getPort() + " > " + line);*/
 
         // Parse the input command
         String[] arguments = line.split("\u0000", 2);
@@ -76,13 +82,33 @@ public class ChatServerUDP implements ChatServer {
         String parametres = arguments.length > 1 ? arguments[1] : "";
 
         switch (commande) {
-            case "msg":
+            case "M":
                 Message message = Protocol.deserializeMessage(parametres);
-                sendBroadcast(Protocol.serializeMessage(message));
+                System.out.println(message);
+                reply(
+                        Protocol.serializeMessage(message),
+                        incomingDatagramPacket.getAddress(),
+                        incomingDatagramPacket.getPort()
+                );
                 break;
-            case "rename":
+            case "R":
                 Rename rename = Protocol.deserializeRename(parametres);
+                System.out.println(rename);
                 sendBroadcast(Protocol.serializeRename(rename));
+                break;
+            case "H":
+                Hello hello = Protocol.deserializeHello(parametres);
+                System.err.println("Hello/" + hello.getInitialRoom());
+                List<Message> messages = chatManager.getMessagesByRoom(hello.getInitialRoom());
+                for (var m : messages) System.out.println("H -> " + m);
+                if (messages.size() > 0) {
+                    reply(
+                            Protocol.serializeMessage(messages.get(0)),
+                            incomingDatagramPacket.getAddress(),
+                            incomingDatagramPacket.getPort()
+                    );
+                    sendBroadcast(Protocol.serializeMessage(messages.get(1)));
+                }
                 break;
             default:
                 System.err.println("? " + line.replace("\u0000", "\\0"));
@@ -98,7 +124,7 @@ public class ChatServerUDP implements ChatServer {
             e.printStackTrace();
         }*/
 
-        // send(Protocol.writeMessage(msg));
+        sendBroadcast(Protocol.serializeMessage(msg));
 
         /*try {
             socket.leaveGroup(group, NetworkInterface.getByInetAddress(InetAddress.getLocalHost()));
@@ -109,15 +135,15 @@ public class ChatServerUDP implements ChatServer {
     }
 
     public void pushRename(Rename rename) {
-        // send(Protocol.writeRename(rename));
+        sendBroadcast(Protocol.serializeRename(rename));
     }
 
     private void reply(String s, InetAddress replyAdress, int replyPort) {
         DatagramSocket socket = null;
         try {
             socket = new DatagramSocket(null);
-            socket.setReuseAddress(false);
-            socket.connect(new InetSocketAddress(replyAdress, replyPort));
+            socket.setReuseAddress(true);
+            // socket.connect(new InetSocketAddress(replyAdress, replyPort));
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -147,7 +173,6 @@ public class ChatServerUDP implements ChatServer {
                     if (broadcast != null) {
                         break;
                     }
-
                     // Do something with the address.
                 }
             }

@@ -1,12 +1,17 @@
 package modele;
 
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+
 public class Message {
 
     private final String createdBy;
 
     private final String text;
 
-    private String room;
+    private final String room;
+
+    private final Date createdTime;
 
     /**
      * Constructeur de Message pour le canal principal (room non spécifiée)
@@ -17,6 +22,7 @@ public class Message {
         this.createdBy = from;
         this.text = text;
         this.room = ""; // canal principal
+        this.createdTime = new Date();
     }
 
     /**
@@ -29,6 +35,14 @@ public class Message {
         this.createdBy = from;
         this.text = text;
         this.room = room;
+        this.createdTime = new Date();
+    }
+
+    public Message(String from, String text, String room, Date createdTime) {
+        this.createdBy = from;
+        this.text = text;
+        this.room = room;
+        this.createdTime = createdTime;
     }
 
     public String getCreatedBy() {
@@ -39,12 +53,20 @@ public class Message {
         return text;
     }
 
+    public String getRoom() {
+        return room;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
     @Override
     public String toString() {
         if (room.length() == 0) {
-            return "<" + createdBy + ">: " + text;
+            return createdTime.toString() + " <" + createdBy + ">: " + text;
         } else {
-            return "<" + createdBy + "@" + room + ">: " + text;
+            return createdTime.toString() + " <" + createdBy + "@" + room + ">: " + text;
         }
     }
 }

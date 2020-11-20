@@ -7,7 +7,7 @@ public class Protocol {
      * @return La chaîne de caractères constituée du type msg, de l'émetteur du message et du message lui-même, séparés par des null character
      */
     public static String serializeMessage(Message message) {
-        return "msg"
+        return "M"
                 + "\u0000" + message.getCreatedBy()
                 + "\u0000" + message.getText();
         // + "\u0000" + message.getRoom();
@@ -29,7 +29,7 @@ public class Protocol {
      * @return La chaîne de caractères constituée des informations du type rename ainsi que des pseudonymes avant et après renommage
      */
     public static String serializeRename(Rename rename) {
-        return "rename" + "\u0000" + rename.getOldPseudo() + "\u0000" + rename.getNewPseudo();
+        return "R" + "\u0000" + rename.getOldPseudo() + "\u0000" + rename.getNewPseudo();
     }
 
     /**
@@ -45,6 +45,15 @@ public class Protocol {
     }
 
     public static String serializeProtocolError() {
-        return "protocol error";
+        return "E";
+    }
+
+    public static String serializeHello(Hello hello) {
+        return "H\u0000" + hello.getInitialRoom();
+    }
+    public static Hello deserializeHello(String str) {
+        String[] segments = str.split("\u0000");
+        String initialRoom = segments[0];
+        return new Hello(initialRoom);
     }
 }

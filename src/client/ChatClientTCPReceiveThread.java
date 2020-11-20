@@ -49,18 +49,18 @@ public class ChatClientTCPReceiveThread extends Thread {
             String parametres = arguments.length > 1 ? arguments[1] : "";
 
             switch (commande) {
-                case "msg":
+                case "M":
                     Message message = Protocol.deserializeMessage(parametres);
                     System.out.println(message.toString());
                     break;
-                case "rename":
+                case "R":
                     Rename rename = Protocol.deserializeRename(parametres);
                     System.out.println(rename.toString());
                     break;
-                case "protocol error":
+                case "E":
                     System.err.println("Erreur de protocole");
                     return;
-                case "disconnect":
+                case "D":
                     System.err.println("Vous avez été déconnecté.e");
                     return;
                 default:

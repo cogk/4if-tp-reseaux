@@ -73,7 +73,7 @@ public class ChatClientThread extends Thread {
         String parametres = arguments.length > 1 ? arguments[1] : "";
 
         switch (commande) {
-            case "msg":
+            case "M":
                 Message msg = Protocol.deserializeMessage(parametres);
                 if (msg.getCreatedBy().equals(this.clientId) || msg.getCreatedBy().length() == 0) {
                     chatManager.pushMessage(msg);
@@ -81,7 +81,7 @@ public class ChatClientThread extends Thread {
                     System.out.println("ignored msg from spoofed id " + msg.getCreatedBy());
                 }
                 break;
-            case "rename":
+            case "R":
                 Rename rename = Protocol.deserializeRename(parametres);
                 if (rename.getOldPseudo().equals(this.clientId) || rename.getOldPseudo().length() == 0) {
                     String newPseudo = rename.getNewPseudo().toLowerCase().replaceAll("[^a-z0-9_-]", "");
@@ -94,7 +94,7 @@ public class ChatClientThread extends Thread {
                 break;
             default:
                 System.err.println("Commande client inconnue pour le serveur: " + line.replace("\u0000", "\\0"));
-                return; // stop the thread
+                break; // stop the thread
         }
     }
 
@@ -104,9 +104,7 @@ public class ChatClientThread extends Thread {
      */
     public void gotMessage(Message message) {
         String from = message.getCreatedBy();
-        if (from.equals(this.clientId) && !from.equals("(anonymous)")) {
-            socOut.println(Protocol.serializeMessage(message));
-        } else {
+        if (!from.equals(this.clientId) && from.startsWith("(")){
             socOut.println(Protocol.serializeMessage(message));
         }
     }

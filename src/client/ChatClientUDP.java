@@ -24,8 +24,8 @@ public class ChatClientUDP {
         int serverPort;
         InetAddress serverAddress;
 
-        DatagramSocket sendSocket = null;
         DatagramSocket receiveSocket = null;
+        DatagramSocket sendSocket = null;
         BufferedReader stdIn = null;
 
         ChatClientUDPSendThread sendThread = null;
@@ -44,11 +44,12 @@ public class ChatClientUDP {
             receiveSocket.setReuseAddress(true);
             receiveSocket.setBroadcast(true);
             receiveSocket.bind(new InetSocketAddress(5555));
+            // receiveSocket.joinGroup(InetAddress.getByName("239.255.255.250"));
             // receiveSocket.bind(new InetSocketAddress(InetAddress.getByName("::"), 5555));
 
             sendSocket = new DatagramSocket();
             sendSocket.setReuseAddress(true);
-            sendSocket.setBroadcast(true);
+            sendSocket.setBroadcast(false);
 
             stdIn = new BufferedReader(new InputStreamReader(System.in));
 

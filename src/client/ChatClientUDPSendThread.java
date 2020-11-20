@@ -1,5 +1,6 @@
 package client;
 
+import modele.Hello;
 import modele.Message;
 import modele.Protocol;
 import modele.Rename;
@@ -19,6 +20,7 @@ public class ChatClientUDPSendThread extends Thread {
     private boolean shouldStop = false;
     private final InetAddress serverAddress;
     private final int serverPort;
+    private String room = "";
 
     /**
      * Constructeur de thread d'envoi client
@@ -45,8 +47,16 @@ public class ChatClientUDPSendThread extends Thread {
         System.out.println("Bienvenue dans l'application de chat");
         System.out.println("  Entrez du texte, puis appuyez sur <Entrée> pour envoyer un message");
         System.out.println("  Des commandes sont disponibles :");
-        System.out.println("    /pseudo <votre nouveau pseudo>");
+        System.out.println("    /quit    -- quitter l'application");
+        System.out.println("    /pseudo <nouveau pseudo>    -- changer votre pseudonyme");
+        System.out.println("    /room <nom de la salle de discussion>    -- changer de salle de discussion");
         System.out.println();
+
+        try {
+            send(Protocol.serializeHello(new Hello(room)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         try {
             while (!shouldStop) {
@@ -58,17 +68,30 @@ public class ChatClientUDPSendThread extends Thread {
                     return;
                 }
 
-                if (line.equals("q")) {
+                if (line.equals("/quit") || line.equals("/dc") || line.equals("/bye")) {
                     System.out.println("* Déconnexion");
                     break;
-                } else if (line.length() == 0) {
-                    continue;
                 } else if (line.startsWith("/pseudo ")) {
                     String newPseudo = line.substring(8).trim();
                     send(Protocol.serializeRename(new Rename(pseudo, newPseudo)));
                     pseudo = newPseudo;
+                } else if (line.startsWith("/room ")) {
+                    String newRoom = line.substring(6).trim();
+                    if (room.equals(newRoom)) {
+                        System.out.println("* Commande ignorée");
+                    } else if (room.length() == 0) {
+                        System.out.println("* Vous avez quitté la salle principale et rejoint #" + newRoom);
+                    } else if (newRoom.length() == 0) {
+                        System.out.println("* Vous avez quitté #" + room + " et rejoint la salle principale");
+                    } else {
+                        System.out.println("* Vous avez quitté #" + room + " et rejoint #" + newRoom);
+                    }
+                    room = newRoom;
                 } else {
-                    send(Protocol.serializeMessage(new Message(pseudo, line)));
+                    if (line.length() > 0) {
+                        // Il s'agit d'un message textuel
+                        send(Protocol.serializeMessage(new Message(pseudo, line, room)));
+                    }
                 }
             }
         } catch (IOException e) {
