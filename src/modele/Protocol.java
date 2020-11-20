@@ -6,7 +6,7 @@ public class Protocol {
      * @param message Objet message à transcrire en chaîne de caractères
      * @return La chaîne de caractères constituée du type msg, de l'émetteur du message et du message lui-même, séparés par des null character
      */
-    public static String writeMessage(Message message) {
+    public static String serializeMessage(Message message) {
         return "msg"
                 + "\u0000" + message.getCreatedBy()
                 + "\u0000" + message.getText();
@@ -18,7 +18,7 @@ public class Protocol {
      * @param str La chaîne de caractères écrite par le client
      * @return Un objet Message contenant les informations de la chaîne fournie en entrée
      */
-    public static Message readMessage(String str) {
+    public static Message deserializeMessage(String str) {
         String[] segments = str.split("\u0000");
         return new Message(segments[0], segments[1]);
     }
@@ -28,7 +28,7 @@ public class Protocol {
      * @param rename Contient la demande de renommage d'un client
      * @return La chaîne de caractères constituée des informations du type rename ainsi que des pseudonymes avant et après renommage
      */
-    public static String writeRename(Rename rename) {
+    public static String serializeRename(Rename rename) {
         return "rename" + "\u0000" + rename.getOldPseudo() + "\u0000" + rename.getNewPseudo();
     }
 
@@ -37,14 +37,14 @@ public class Protocol {
      * @param str La chaîne écrite par le client pour demander un renommage
      * @return L'objet Rename à exploiter pour changer le pseudonyme du client
      */
-    public static Rename readRename(String str) {
+    public static Rename deserializeRename(String str) {
         String[] segments = str.split("\u0000");
         String oldPseudo = segments[0];
         String newPseudo = segments[1];
         return new Rename(oldPseudo, newPseudo);
     }
 
-    public static String writeProtocolError() {
+    public static String serializeProtocolError() {
         return "protocol error";
     }
 }

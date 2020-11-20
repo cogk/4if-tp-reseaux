@@ -48,10 +48,10 @@ public class ChatClientTCPSendThread extends Thread {
                 continue;
             } else if (line.startsWith("/pseudo ")) {
                 String newPseudo = line.substring(8).trim();
-                socketOutput.println(Protocol.writeRename(new Rename(pseudo, newPseudo)));
+                socketOutput.println(Protocol.serializeRename(new Rename(pseudo, newPseudo)));
                 pseudo = newPseudo;
             } else {
-                socketOutput.println(Protocol.writeMessage(new Message(pseudo, line)));
+                socketOutput.println(Protocol.serializeMessage(new Message(pseudo, line)));
             }
         }
     }

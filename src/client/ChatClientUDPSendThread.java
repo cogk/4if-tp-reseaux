@@ -55,10 +55,10 @@ public class ChatClientUDPSendThread extends Thread {
                     continue;
                 } else if (line.startsWith("/pseudo ")) {
                     String newPseudo = line.substring(8).trim();
-                    send(Protocol.writeRename(new Rename(pseudo, newPseudo)));
+                    send(Protocol.serializeRename(new Rename(pseudo, newPseudo)));
                     pseudo = newPseudo;
                 } else {
-                    send(Protocol.writeMessage(new Message(pseudo, line)));
+                    send(Protocol.serializeMessage(new Message(pseudo, line)));
                 }
             }
         } catch (IOException e) {
