@@ -88,11 +88,25 @@ public class WebServer {
 
                 System.out.println(s.getInetAddress() + " " + req);
 
+                Response res = new Response(404);;
+                switch(req.getMethod()){
+                    case "GET":
+                        res = req.getAction(documentRoot);
+                    case "HEAD":
+                        res = req.headAction(documentRoot);
+                    case "PUT":
+                        res = req.putAction(documentRoot);
+                    case "POST":
+                        res = req.postAction(documentRoot);
+                    case "DELETE":
+                        res = req.deleteAction(documentRoot);
+                }
+                out.println(res.toHttpString());
                 String url = req.getUrl().replace("..", "");
                 Path fullPath = Path.of(documentRoot, url);
                 File file = fullPath.toFile();
 
-                if (!file.canRead()) {
+                /*if (!file.canRead()) {
                     Response res = new Response(404);
                     System.err.println("404 " + req + "\n" + url);
                     res.setBody("Fichier non trouvé");
@@ -105,7 +119,7 @@ public class WebServer {
                     res.getHeaders().add("Server", "Bot");
                     res.setBody(contents);
                     out.print(res.toHttpString());
-                }
+                }*/
 
                 out.flush();
                 remote.close();

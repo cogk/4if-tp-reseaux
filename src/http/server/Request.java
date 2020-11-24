@@ -1,5 +1,11 @@
 package http.server;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public class Request {
     private String method;
 
@@ -49,5 +55,65 @@ public class Request {
                 ", headers=" + headers +
                 ", body='" + body + '\'' +
                 '}';
+    }
+
+    public Response getAction(String documentRoot){
+        String url = this.getUrl().replace("..", "");
+        Path fullPath = Path.of(documentRoot, url);
+        File file = fullPath.toFile();
+        if (!file.canRead()) {
+            Response res = new Response(404);
+            System.err.println("404 " + this + "\n" + url);
+            res.setBody("Fichier non trouvé");
+            return(res);
+        } else {
+            String contents = null;
+            try {
+                contents = new String(Files.readAllBytes(fullPath));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Response res = new Response(200);
+            res.getHeaders().add("Content-Type", MimeType.getTypeForPath(fullPath));
+            res.getHeaders().add("Server", "Bot");
+            res.setBody(contents);
+            return(res);
+        }
+    }
+
+    public Response headAction(String documentRoot){
+        String url = this.getUrl().replace("..", "");
+        Path fullPath = Path.of(documentRoot, url);
+        File file = fullPath.toFile();
+        if (!file.canRead()) {
+            Response res = new Response(404);
+            System.err.println("404 " + this + "\n" + url);
+            res.setBody("Fichier non trouvé");
+            return(res);
+        } else {
+            Response res = new Response(200);
+            res.getHeaders().add("Content-Type", MimeType.getTypeForPath(fullPath));
+            res.getHeaders().add("Server", "Bot");
+            return(res);
+        }
+    }
+
+    public Response putAction(String documentRoot){
+        return new Response(404);
+    }
+
+    public Response postAction(String documentRoot){
+        return new Response(404);
+    }
+
+    public Response deleteAction(String documentRoot){
+        return new Response(404);
+    }
+
+    public File getFile(String documentRoot){
+        String url = this.getUrl().replace("..", "");
+        Path fullPath = Path.of(documentRoot, url);
+        File file = fullPath.toFile();
+        return file;
     }
 }
