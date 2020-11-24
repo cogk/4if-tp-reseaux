@@ -93,7 +93,9 @@ public class ChatClientThread extends Thread {
                 for (Message message : messages) {
                     socOut.println(Protocol.serializeMessage(message));
                 }
-                chatManager.pushMessage(new Message("~server~", this.clientId + " vient d'arriver sur le serveur."));
+                if (!this.clientId.startsWith("(")) {
+                    chatManager.pushMessage(new Message("~server~", this.clientId + " vient d'arriver sur le serveur."));
+                }
                 break;
             default:
                 System.err.println("Commande client inconnue pour le serveur: " + line.replace("\u0000", "\\0"));

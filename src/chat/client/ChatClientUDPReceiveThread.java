@@ -40,7 +40,8 @@ public class ChatClientUDPReceiveThread extends Thread {
             try {
                 socket.receive(incomingDatagramPacket);
             } catch (IOException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
+                break;
             }
 
             line = new String(

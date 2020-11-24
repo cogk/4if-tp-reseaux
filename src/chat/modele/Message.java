@@ -1,5 +1,7 @@
 package chat.modele;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class Message {
@@ -10,7 +12,7 @@ public class Message {
 
     private final String room;
 
-    private final Date createdTime;
+    private final LocalDateTime createdTime;
 
     /**
      * Constructeur de Message pour le canal principal (room non spécifiée)
@@ -21,7 +23,7 @@ public class Message {
         this.createdBy = from;
         this.text = text;
         this.room = ""; // canal principal
-        this.createdTime = new Date();
+        this.createdTime = LocalDateTime.now();
     }
 
     /**
@@ -34,10 +36,10 @@ public class Message {
         this.createdBy = from;
         this.text = text;
         this.room = room;
-        this.createdTime = new Date();
+        this.createdTime = LocalDateTime.now();
     }
 
-    public Message(String from, String text, String room, Date createdTime) {
+    public Message(String from, String text, String room, LocalDateTime createdTime) {
         this.createdBy = from;
         this.text = text;
         this.room = room;
@@ -56,16 +58,21 @@ public class Message {
         return room;
     }
 
-    public Date getCreatedTime() {
+    public LocalDateTime getCreatedTime() {
         return createdTime;
     }
 
     @Override
     public String toString() {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         if (room.length() == 0) {
-            return createdTime.toString() + " <" + createdBy + ">: " + text;
+            return dateTimeFormatter.format(createdTime) + " <" + createdBy + ">: " + text;
         } else {
-            return createdTime.toString() + " <" + createdBy + "@" + room + ">: " + text;
+            return dateTimeFormatter.format(createdTime) + " <" + createdBy + "@" + room + ">: " + text;
         }
+    }
+
+    public String serialize() {
+        return createdBy + "\0" + DateTimeFormatter.ISO_INSTANT.format(createdTime) + "\0" + room + "\0" + text;
     }
 }

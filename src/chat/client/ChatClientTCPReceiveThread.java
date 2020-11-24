@@ -41,7 +41,8 @@ public class ChatClientTCPReceiveThread extends Thread {
             try {
                 line = socketInput.readLine();
             } catch (IOException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
+                break;
             }
 
             if (line == null) {

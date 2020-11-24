@@ -9,7 +9,7 @@ public class ChatClientState {
     }
 
     public void setPseudo(String pseudo) {
-        this.pseudo = pseudo;
+        this.pseudo = pseudo.replaceAll("[^a-zA-Z0-9_-]", "");
     }
 
     public String getRoom() {

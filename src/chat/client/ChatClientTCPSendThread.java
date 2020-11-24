@@ -74,7 +74,7 @@ public class ChatClientTCPSendThread extends Thread {
                 System.out.println("Votre nouveau pseudo est <" + newPseudo + ">");
             } else if (line.startsWith("/room ") || line.equals("/room")) {
                 String room = chatClientState.getRoom();
-                String newRoom = line.substring(6).trim();
+                String newRoom = line.equals("/room") ? "" : line.substring(6).trim();
                 if (room.equals(newRoom)) {
                     System.out.println("* Commande ignorée");
                 } else if (room.length() == 0) {
