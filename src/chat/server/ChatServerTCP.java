@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatServerTCP implements ChatServer {
-    private final List<ChatClientThread> clients = new ArrayList<>();
+    private final List<ChatServerTCPThread> clients = new ArrayList<>();
 
     private final int port;
 
@@ -29,7 +29,7 @@ public class ChatServerTCP implements ChatServer {
             while (true) {
                 Socket clientSocket = listenSocket.accept();
                 System.out.println("TCP connection from:" + clientSocket.getInetAddress());
-                ChatClientThread ct = new ChatClientThread(clientSocket, chatManager);
+                ChatServerTCPThread ct = new ChatServerTCPThread(clientSocket, chatManager);
                 clients.add(ct);
                 ct.start();
             }
@@ -45,7 +45,7 @@ public class ChatServerTCP implements ChatServer {
      */
     public void pushMessage(Message msg) {
         for (int i = 0; i < clients.size(); i++) {
-            ChatClientThread ct = clients.get(i);
+            ChatServerTCPThread ct = clients.get(i);
             ct.gotMessage(msg);
         }
     }
@@ -56,7 +56,7 @@ public class ChatServerTCP implements ChatServer {
      */
     public void pushRename(Rename rename) {
         for (int i = 0; i < clients.size(); i++) {
-            ChatClientThread ct = clients.get(i);
+            ChatServerTCPThread ct = clients.get(i);
             ct.gotRename(rename);
         }
     }

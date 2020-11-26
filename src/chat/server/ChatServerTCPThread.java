@@ -18,7 +18,7 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.List;
 
-public class ChatClientThread extends Thread {
+public class ChatServerTCPThread extends Thread {
 
     private final ChatManager chatManager;
     private final Socket clientSocket;
@@ -33,7 +33,7 @@ public class ChatClientThread extends Thread {
      * @param s Information sur la socket utilisée pour transmettre des messages et demandes de renommage
      * @param chatManager Permet de connaître le chat manager qui gère le stockage de l'historique des messages
      */
-    public ChatClientThread(Socket s, ChatManager chatManager) {
+    public ChatServerTCPThread(Socket s, ChatManager chatManager) {
         this.clientSocket = s;
         this.chatManager = chatManager;
     }
