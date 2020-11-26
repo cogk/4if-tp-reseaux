@@ -5,8 +5,6 @@ package http.server;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * Example program from Chapter 1 Programming Spiders, Bots and Aggregators in
@@ -41,85 +39,64 @@ public class WebServer {
                 // wait for a connection
                 Socket remote = s.accept();
                 // remote is now the connected socket
-                BufferedReader in = new BufferedReader(new InputStreamReader(remote.getInputStream()));
-                BufferedInputStream in2 = new BufferedInputStream(remote.getInputStream());
-                PrintWriter out = new PrintWriter(remote.getOutputStream());
+                InputStream inputStream = remote.getInputStream();
+                OutputStream outputStream = remote.getOutputStream();
 
-                Request req = new Request();
+                BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+                PrintWriter out = new PrintWriter(remote.getOutputStream());
 
                 // Lecture de l'entête
                 String line = in.readLine();
                 if (line == null || line.length() == 0) {
-                    Response res = new Response(400);
-                    out.print(res.toHttpString());
-                    out.flush();
+                    Response res = new Response(outputStream, 400);
+                    res.end("Requête malformée");
                     remote.close();
                     continue;
                 }
 
-                int indexPremierEspace = line.indexOf(" ");
-                int indexDernierEspace = line.lastIndexOf(" ");
-                req.setMethod(line.substring(0, indexPremierEspace));
-                req.setUrl(line.substring(indexPremierEspace + 1, indexDernierEspace));
+                int indexPremierEspace = line.indexOf(' ');
+                int indexDernierEspace = line.lastIndexOf(' ');
+                String method = line.substring(0, indexPremierEspace);
+                String url = line.substring(indexPremierEspace + 1, indexDernierEspace);
+
+                int indexOfQuestionMark = url.indexOf('?');
+                String urlPathOnly = indexOfQuestionMark == -1 ? url : url.substring(0, indexOfQuestionMark);
+
+                Request req = new Request(inputStream, method, urlPathOnly, documentRoot);
 
                 // Lecture des headers
                 line = in.readLine();
                 while (line.length() > 0) {
                     String[] segments = line.split(": ", 2);
-                    req.getHeaders().add(segments[0], segments[1]);
+                    req.addHeader(segments[0], segments[1]);
                     line = in.readLine(); // last line will be empty
-                }
-
-                if (in.ready()) {
-                    char[] buffer = new char[256];
-                    int returnValue = in.read(buffer, 0, buffer.length);
-                    while (returnValue > 0) {
-                        System.out.println(returnValue);
-                        // on a lu des caractères
-                        req.appendBody(new String(buffer, 0, returnValue));
-                        if (!in.ready()) {
-                            break;
-                        }
-                        returnValue = in.read(buffer, 0, buffer.length);
-                    }
                 }
 
                 System.out.println(s.getInetAddress() + " " + req);
 
-                Response res = new Response(404);;
-                switch(req.getMethod()){
+                Response res = new Response(outputStream);
+                switch (req.getMethod()) {
                     case "GET":
-                        res = req.getAction(documentRoot);
+                        RequestHandlers.getAction(req, res);
+                        break;
                     case "HEAD":
-                        res = req.headAction(documentRoot);
+                        RequestHandlers.headAction(req, res);
+                        break;
                     case "PUT":
-                        res = req.putAction(in2,documentRoot);
+                        RequestHandlers.putAction(req, res);
+                        break;
                     case "POST":
-                        res = req.postAction(in2,documentRoot);
+                        RequestHandlers.postAction(req, res);
+                        break;
                     case "DELETE":
-                        res = req.deleteAction(documentRoot);
+                        RequestHandlers.deleteAction(req, res);
+                        break;
+                    default:
+                        res.setStatus(400);
+                        res.end("Requête malformée");
                 }
-                out.println(res.toHttpString());
-                String url = req.getUrl().replace("..", "");
-                Path fullPath = Path.of(documentRoot, url);
-                File file = fullPath.toFile();
 
-                /*if (!file.canRead()) {
-                    Response res = new Response(404);
-                    System.err.println("404 " + req + "\n" + url);
-                    res.setBody("Fichier non trouvé");
-                    out.print(res.toHttpString());
-                } else {
-                    String contents = new String(Files.readAllBytes(fullPath));
-
-                    Response res = new Response(200);
-                    res.getHeaders().add("Content-Type", MimeType.getTypeForPath(fullPath));
-                    res.getHeaders().add("Server", "Bot");
-                    res.setBody(contents);
-                    out.print(res.toHttpString());
-                }*/
-
-                out.flush();
+                res.endIfNotEnded();
                 remote.close();
             } catch (Exception e) {
                 System.err.println("Error: " + e);

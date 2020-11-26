@@ -50,6 +50,7 @@ public class MimeType {
         extensionsVersMime.put("ogx", "application/ogg");
         extensionsVersMime.put("opus", "audio/opus");
         extensionsVersMime.put("otf", "font/otf");
+        // extensionsVersMime.put("otf", "application/x-font-opentype");
         extensionsVersMime.put("png", "image/png");
         extensionsVersMime.put("pdf", "application/pdf");
         extensionsVersMime.put("php", "application/x-httpd-php");
@@ -65,14 +66,17 @@ public class MimeType {
         extensionsVersMime.put("tiff", "image/tiff");
         extensionsVersMime.put("ts", "video/mp2t");
         extensionsVersMime.put("ttf", "font/ttf");
+        // extensionsVersMime.put("ttf", "application/x-font-ttf");
         extensionsVersMime.put("txt", "text/plain");
         extensionsVersMime.put("vsd", "application/vnd.visio");
         extensionsVersMime.put("wav", "audio/wav");
         extensionsVersMime.put("weba", "audio/webm");
         extensionsVersMime.put("webm", "video/webm");
         extensionsVersMime.put("webp", "image/webp");
-        extensionsVersMime.put("woff", "font/woff");
-        extensionsVersMime.put("woff2", "font/woff2");
+        // extensionsVersMime.put("woff", "font/woff");
+        extensionsVersMime.put("woff", "application/font-woff");
+        // extensionsVersMime.put("woff2", "font/woff2");
+        extensionsVersMime.put("woff2", "application/font-woff2");
         extensionsVersMime.put("xhtml", "application/xhtml+xml");
         extensionsVersMime.put("xls", "application/vnd.ms-excel");
         extensionsVersMime.put("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

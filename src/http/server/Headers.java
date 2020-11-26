@@ -29,4 +29,8 @@ public class Headers {
 
         return out.toString();
     }
+
+    protected List<Header> getList() {
+        return headers;
+    }
 }

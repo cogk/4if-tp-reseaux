@@ -1,48 +1,122 @@
 package http.server;
 
-import java.io.PrintWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class Response {
-    private int status;
+    private int status = 200;
 
     private final Headers headers = new Headers();
 
-    private String body = "";
+    private final OutputStream outputStream;
 
-    public Response(int status) {
+    private boolean headersSent = false;
+
+    private boolean ended = false;
+
+    public Response(OutputStream outputStream) {
+        this.outputStream = outputStream;
+    }
+
+    public Response(OutputStream outputStream, int status) {
+        this.outputStream = outputStream;
         this.status = status;
     }
 
-    public String getStatusText() {
-        return StatusText.getStatusTextForCode(this.status);
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public int getStatus() {
         return status;
     }
 
+    public String getStatusText() {
+        return Status.getStatusTextForCode(this.status);
+    }
+
     public Headers getHeaders() {
         return headers;
     }
 
-    public String getBody() {
-        return body;
+    public void addHeader(String key, String value) {
+        headers.add(key, value);
     }
 
-    public void setBody(String body) {
-        this.body = body;
-    }
+    public void writeHeaders() {
+        if (headersSent) {
+            System.err.println("Headers already sent");
+            return;
+        }
+        headersSent = true;
 
-    public String toHttpString() {
         final String HTTP_VERSION = "1.0";
-        final String CRLF = "\r\n";
+        writeln("HTTP/" + HTTP_VERSION + " " + status + " " + getStatusText());
+        for (Header header : headers.getList()) {
+            writeln(header.toString());
+        }
+        writeln();
+    }
 
-        String out = "";
-        out += "HTTP/" + HTTP_VERSION + " " + status + " " + getStatusText() + CRLF;
-        out += headers.toHttpString();
-        out += CRLF;
-        out += body;
+    public void write(byte[] b) {
+        if (!headersSent) {
+            writeHeaders();
+        }
+        if (!ended) {
+            try {
+                outputStream.write(b);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.err.println("Can't write(), already ended");
+        }
+    }
 
-        return out;
+    public void write(String s) {
+        write(s.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public void writeln(String s) {
+        write(s);
+        write("\r\n");
+    }
+
+    public void writeln() {
+        write("\r\n");
+    }
+
+    public void end(byte[] b) {
+        if (!ended) {
+            write(b);
+            end();
+        }
+    }
+
+    public void end(String s) {
+        if (!ended) {
+            write(s);
+            end();
+        }
+    }
+
+    public void end() {
+        if (!ended) {
+            ended = true;
+            try {
+                outputStream.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.err.println("Can't end(), already ended");
+        }
+    }
+
+    public void endIfNotEnded() {
+        if (!ended) {
+            end();
+        }
     }
 }
