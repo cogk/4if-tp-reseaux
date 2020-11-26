@@ -4,7 +4,7 @@
  * Date: 10/01/04
  * Authors:
  */
-package chat.client;
+package chat.tcp;
 
 import chat.modele.ChatClientState;
 

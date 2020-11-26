@@ -5,12 +5,13 @@
  * Authors:
  */
 
-package chat.server;
+package chat.tcp;
 
 import chat.modele.Hello;
 import chat.modele.Message;
 import chat.modele.Protocol;
 import chat.modele.Rename;
+import chat.modele.ChatManager;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

@@ -1,6 +1,11 @@
-package chat.server;
+package chat;
 
-public class Server {
+import chat.modele.ChatManager;
+import chat.modele.ChatServer;
+import chat.udp.ChatServerUDP;
+import chat.tcp.ChatServerTCP;
+
+public class Main {
     /**
      * main method
      *

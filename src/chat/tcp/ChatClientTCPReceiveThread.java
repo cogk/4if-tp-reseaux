@@ -1,4 +1,4 @@
-package chat.client;
+package chat.tcp;
 
 import chat.modele.ChatClientState;
 import chat.modele.Message;

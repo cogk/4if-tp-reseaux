@@ -1,4 +1,4 @@
-package chat.server;
+package chat.modele;
 
 import chat.modele.Message;
 import chat.modele.Rename;

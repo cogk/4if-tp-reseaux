@@ -1,4 +1,4 @@
-package chat.client;
+package chat.tcp;
 
 import chat.modele.*;
 
@@ -8,8 +8,20 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.PrintStream;
+import java.util.Random;
 
 public class ChatClientGUIWindow {
+    private static final Color[] couleurs = {
+            Color.getHSBColor(0.0f/360, 100, 95),
+            Color.getHSBColor(45.0f/360, 100, 95),
+            Color.getHSBColor(90.0f/360, 100, 95),
+            Color.getHSBColor(135.0f/360, 100, 95),
+            Color.getHSBColor(180.0f/360, 100, 95),
+            Color.getHSBColor(225.0f/360, 100, 95),
+            Color.getHSBColor(270.0f/360, 100, 95),
+            Color.getHSBColor(315.0f/360, 100, 95),
+    };
+
     private final TextArea textAreaHistorique;
     private final TextField entreeTextuelle;
     private final Button boutonEnvoyer;
@@ -36,6 +48,8 @@ public class ChatClientGUIWindow {
         // Historique de conversation
         textAreaHistorique = new TextArea();
         textAreaHistorique.setEditable(false); // lecture seule
+        final Color couleur = couleurs[new Random().nextInt(couleurs.length)];
+        textAreaHistorique.setBackground(couleur);
         frame.add(textAreaHistorique);
 
         // Entrée
@@ -122,6 +136,8 @@ public class ChatClientGUIWindow {
             socketOutput.println(Protocol.serializeRename(new Rename(pseudo, newPseudo)));
             chatClientState.setPseudo(newPseudo);
             appendText("Votre nouveau pseudo est <" + newPseudo + ">");
+        } else if (line.startsWith("/clear")) {
+            textAreaHistorique.setText("");
         } else if (line.startsWith("/room ") || line.equals("/room")) {
             String newRoom = line.equals("/room") ? "" : line.substring(6).trim();
             if (room.equals(newRoom)) {

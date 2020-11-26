@@ -1,7 +1,9 @@
-package chat.server;
+package chat.tcp;
 
+import chat.modele.ChatServer;
 import chat.modele.Message;
 import chat.modele.Rename;
+import chat.modele.ChatManager;
 
 import java.net.ServerSocket;
 import java.net.Socket;

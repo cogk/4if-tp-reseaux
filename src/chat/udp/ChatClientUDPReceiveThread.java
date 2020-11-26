@@ -1,4 +1,4 @@
-package chat.client;
+package chat.udp;
 
 import chat.modele.Message;
 import chat.modele.Protocol;
