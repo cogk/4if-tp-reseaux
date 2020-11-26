@@ -44,6 +44,9 @@ public class Response {
         headers.add(key, value);
     }
 
+    /**
+     * Cette fonction écrit les headers s'ils n'ont pas déjà été écrits.
+     */
     public void writeHeaders() {
         if (headersSent) {
             System.err.println("Headers already sent");
@@ -59,6 +62,10 @@ public class Response {
         writeln();
     }
 
+    /**
+     * Cette fonction permet d'écrire sur le Stream d'output.
+     * @param b Chaîne de bits à écrire.
+     */
     public void write(byte[] b) {
         if (!headersSent) {
             writeHeaders();
@@ -74,19 +81,34 @@ public class Response {
         }
     }
 
+    /**
+     * Cette fonction permet de transformer une chaîne de caractères en chaînes de bits pour l'écrire sur le Stream d'output
+     * @param s Chaîne de caractères à écrire.
+     */
     public void write(String s) {
         write(s.getBytes(StandardCharsets.UTF_8));
     }
 
+    /**
+     * Cette fonction permet d'écrire une chaîne de caractères et un passage à la ligne.
+     * @param s Chaîne de caractères à écrire.
+     */
     public void writeln(String s) {
         write(s);
         write("\r\n");
     }
 
+    /**
+     * Cette fonction permet d'écrire un retour à la ligne.
+     */
     public void writeln() {
         write("\r\n");
     }
 
+    /**
+     * Cette fonction écrit la chaîne de bits fournie puis met fin au Stream.
+     * @param b Chaîne de bits à écrire.
+     */
     public void end(byte[] b) {
         if (!ended) {
             write(b);
@@ -94,6 +116,10 @@ public class Response {
         }
     }
 
+    /**
+     * Cette fonction écrit la chaîne de caractères fournie puis met fin au Stream.
+     * @param s Chaîne de caractères à écrire.
+     */
     public void end(String s) {
         if (!ended) {
             write(s);
@@ -101,6 +127,9 @@ public class Response {
         }
     }
 
+    /**
+     * Cette fonction termine le Stream.
+     */
     public void end() {
         if (!ended) {
             ended = true;
@@ -114,6 +143,9 @@ public class Response {
         }
     }
 
+    /**
+     * Cette fonction termine le Stream s'il n'est pas déjà terminé.
+     */
     public void endIfNotEnded() {
         if (!ended) {
             end();

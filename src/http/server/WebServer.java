@@ -18,7 +18,7 @@ import java.net.Socket;
  */
 public class WebServer {
     /**
-     * WebServer constructor.
+     * Constructeur de WebServer.
      */
     protected void start(int port, String documentRoot) {
         ServerSocket s;
@@ -90,6 +90,13 @@ public class WebServer {
                         break;
                     case "DELETE":
                         RequestHandlers.deleteAction(req, res);
+                        break;
+                    case "CONNECT":
+                    case "OPTIONS":
+                    case "TRACE":
+                    case "PATCH":
+                        res.setStatus(501);
+                        res.end("Méthode non implémentée");
                         break;
                     default:
                         res.setStatus(400);

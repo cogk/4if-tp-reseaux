@@ -4,6 +4,10 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 public class WebPing {
+    /**
+     * Main du WebPing
+     * @param args Contient le host du Serveur et le port du serveur.
+     */
     public static void main(String[] args) {
         if (args.length != 2) {
             System.err.println("Usage java WebPing <host name> <port number>");

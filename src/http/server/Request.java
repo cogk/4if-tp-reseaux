@@ -39,6 +39,10 @@ public class Request {
         return inputStream;
     }
 
+    public String getDocumentRoot() {
+        return documentRoot;
+    }
+
     @Override
     public String toString() {
         return "Request{" +
@@ -48,15 +52,20 @@ public class Request {
                 '}';
     }
 
+    /**
+     * Ajoute un Header dans la liste des Headers.
+     * @param key Clé du Header à ajouter.
+     * @param value Valeur du Header à ajouter.
+     */
     public void addHeader(String key, String value) {
         headers.add(key, value);
     }
 
+    /**
+     * Cette fonction permet d'obtenir le chemin absolu grâce à l'URL.
+     * @return Le chemin absolu pour l'URL.
+     */
     public Path getAbsolutePath() {
         return Path.of(documentRoot, getUrl().replace("..", ""));
-    }
-
-    public String getDocumentRoot() {
-        return documentRoot;
     }
 }

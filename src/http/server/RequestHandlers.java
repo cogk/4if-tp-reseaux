@@ -5,7 +5,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class RequestHandlers {
-
+    /**
+     * Cette fonction permet d'effectuer l'action correspondant à la méthode GET HTTP.
+     * @param request Contient les informations de la requête GET que l'on veut effectuer.
+     * @param res Réponse à remplir en fonction du déroulement de l'action de la requpete GET.
+     */
     public static void getAction(Request request, Response res) {
         Path fullPath = request.getAbsolutePath();
         if (Files.isDirectory(fullPath)) {
@@ -33,6 +37,11 @@ public class RequestHandlers {
         res.end(contents);
     }
 
+    /**
+     * Cette fonction permet d'effectuer l'action correspondant à la méthode HEAD HTTP.
+     * @param request Contient les informations de la requête HEAD que l'on veut effectuer.
+     * @param res Réponse à remplir en fonction du déroulement de l'action de la requpete HEAD.
+     */
     public static void headAction(Request request, Response res) {
         Path fullPath = request.getAbsolutePath();
         if (!Files.isReadable(fullPath)) {
@@ -52,6 +61,11 @@ public class RequestHandlers {
         }
     }
 
+    /**
+     * Cette fonction permet d'effectuer l'action correspondant à la méthode PUT HTTP.
+     * @param request Contient les informations de la requête PUT que l'on veut effectuer.
+     * @param res Réponse à remplir en fonction du déroulement de l'action de la requpete PUT.
+     */
     public static void putAction(Request request, Response res) {
         Path fullPath = request.getAbsolutePath();
         boolean existed = Files.exists(fullPath);
@@ -95,6 +109,11 @@ public class RequestHandlers {
         }
     }
 
+    /**
+     * Cette fonction permet d'effectuer l'action correspondant à la méthode POST HTTP.
+     * @param request Contient les informations de la requête POST que l'on veut effectuer.
+     * @param res Réponse à remplir en fonction du déroulement de l'action de la requpete POST.
+     */
     public static void postAction(Request request, Response res) {
         Path fullPath = request.getAbsolutePath();
         boolean existed = Files.exists(fullPath);
@@ -124,6 +143,11 @@ public class RequestHandlers {
         }
     }
 
+    /**
+     * Cette fonction permet d'effectuer l'action correspondant à la méthode DELETE HTTP.
+     * @param request Contient les informations de la requête DELETE que l'on veut effectuer.
+     * @param res Réponse à remplir en fonction du déroulement de l'action de la requpete DELETE.
+     */
     public static void deleteAction(Request request, Response res) {
         Path fullPath = request.getAbsolutePath();
         boolean existed = Files.exists(fullPath);
@@ -146,12 +170,23 @@ public class RequestHandlers {
         }
     }
 
+    /**
+     * Cette fonction permet l'affichage en cas d'erreur de fichier non trouvé (404).
+     * @param res Réponse à remplir avec les informations de l'erreur.
+     * @param fullPath Chemin complet de la ressource demandée.
+     */
     private static void e404(Response res, Path fullPath) {
         System.err.println("404 " + fullPath);
         res.setStatus(Status.NotFound);
         res.end("Fichier non trouvé");
     }
 
+    /**
+     * Cette fonction permet l'affichage en cas d'erreur d'erreur interne au serveur (500).
+     * @param res Réponse à remplir avec les informations de l'erreur.
+     * @param fullPath Chemin complet de la ressource demandée.
+     * @param e Contient l'exception trouvée.
+     */
     private static void e500(Response res, Path fullPath, Exception e) {
         System.err.println("500 " + fullPath);
         e.printStackTrace();
