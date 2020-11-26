@@ -57,7 +57,7 @@ public class RequestHandlers {
             }
             res.addHeader("Content-Length", Long.toString(contentLength));
             res.addHeader("Server", "TP");
-            res.end();
+            res.end("");
         }
     }
 
@@ -69,18 +69,21 @@ public class RequestHandlers {
     public static void putAction(Request request, Response res) {
         Path fullPath = request.getAbsolutePath();
         boolean existed = Files.exists(fullPath);
-        if (!Files.isWritable(fullPath)) {
+        if (existed && !Files.isWritable(fullPath)) {
             res.setStatus(Status.Forbidden);
             res.end("Le fichier n'est pas inscriptible");
             return;
         }
-        if (Files.isDirectory(fullPath)) {
+        if (existed && Files.isDirectory(fullPath)) {
             res.setStatus(Status.BadRequest);
             res.end("PUT impossible sur un dossier");
             return;
         }
 
         try {
+            if (!existed) {
+                Files.createFile(fullPath);
+            }
             InputStream inputStream = request.getInputStream();
             File file = new File(fullPath.toUri());
             BufferedOutputStream fileOut = new BufferedOutputStream(new FileOutputStream(file));
@@ -92,19 +95,16 @@ public class RequestHandlers {
             fileOut.close();
 
             if (existed) {
-                long fileSize = Files.size(fullPath);
-                if (fileSize == 0) {
-                    res.setStatus(Status.NoContent);
-                } else {
-                    res.setStatus(Status.OK);
-                }
+                res.setStatus(Status.NoContent);
             } else {
                 res.setStatus(Status.Created);
             }
 
-            Path relativePath = fullPath.relativize(Path.of(request.getDocumentRoot()));
+            Path relativePath = Path.of(request.getDocumentRoot()).relativize(fullPath);
             res.addHeader("Content-Location", relativePath.toString());
+            res.end("");
         } catch (IOException e) {
+            e.printStackTrace();
             e500(res, fullPath, e);
         }
     }
@@ -120,7 +120,7 @@ public class RequestHandlers {
         try {
             InputStream inputStream = request.getInputStream();
             File file = new File(fullPath.toUri());
-            BufferedOutputStream fileOut = new BufferedOutputStream(new FileOutputStream(file));
+            BufferedOutputStream fileOut = new BufferedOutputStream(new FileOutputStream(file, true));
             while (inputStream.available() > 0) {
                 byte[] buffer = new byte[256];
                 int nRead = inputStream.read(buffer, 0, buffer.length);
@@ -160,7 +160,7 @@ public class RequestHandlers {
 
         if (deleted) {
             res.setStatus(Status.NoContent);
-            res.end();
+            res.end("");
         } else if (!existed) {
             res.setStatus(Status.NotFound);
             res.end("Ce fichier n'existe pas");
@@ -176,9 +176,11 @@ public class RequestHandlers {
      * @param fullPath Chemin complet de la ressource demandée.
      */
     private static void e404(Response res, Path fullPath) {
+        String html = "<h1>Fichier non trouvé</h1>";
         System.err.println("404 " + fullPath);
         res.setStatus(Status.NotFound);
-        res.end("Fichier non trouvé");
+        res.addHeader("Content-Type", "text/html");
+        res.end(html);
     }
 
     /**
@@ -188,9 +190,71 @@ public class RequestHandlers {
      * @param e Contient l'exception trouvée.
      */
     private static void e500(Response res, Path fullPath, Exception e) {
+        String html = "<h1>Erreur interne</h1><pre>" + e.toString() + "</pre>";
         System.err.println("500 " + fullPath);
         e.printStackTrace();
         res.setStatus(Status.InternalServerError);
-        res.end("Erreur interne: " + e.getMessage());
+        res.addHeader("Content-Type", "text/html");
+        res.end(html);
+    }
+
+    public static void execPHP(Response res, Path pathToScript) {
+        execCommand(res, "php", pathToScript);
+    }
+
+    public static void execPython(Response res, Path pathToScript) {
+        execCommand(res, "python3", pathToScript);
+    }
+
+    public static void execCommand(Response res, String command, Path pathToScript) {
+        System.out.println("Running executable " + command + " " + pathToScript);
+        try {
+            String chemin = pathToScript.toAbsolutePath().toString();
+            Process p = Runtime.getRuntime().exec(command + " " + chemin);
+
+            OutputStream stdinStream = p.getOutputStream(); // stdin
+            stdinStream.flush();
+            stdinStream.close();
+
+            p.waitFor();
+
+            String line;
+
+            // stdout
+            StringBuilder outputStringBuilder = new StringBuilder();
+            BufferedReader outputStream = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while (outputStream.ready() && (line = outputStream.readLine()) != null) {
+                outputStringBuilder.append(line).append("\n");
+            }
+            outputStream.close();
+
+            // stderr
+            StringBuilder errorStringBuilder = new StringBuilder();
+            BufferedReader errorStream = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            while (errorStream.ready() && (line = errorStream.readLine()) != null) {
+                errorStringBuilder.append(line).append("\n");
+            }
+            errorStream.close();
+
+
+            String error = errorStringBuilder.toString();
+            if (error.length() > 0) {
+                res.setStatus(Status.InternalServerError);
+                res.end(error);
+                return;
+            }
+
+            String output = outputStringBuilder.toString();
+            if (output.length() > 0) {
+                res.setStatus(Status.OK);
+                res.end(output);
+                return;
+            }
+
+            res.setStatus(Status.NoContent);
+            res.end(output);
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
     }
 }

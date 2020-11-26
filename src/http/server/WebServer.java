@@ -2,9 +2,11 @@
 
 package http.server;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Path;
 
 /**
  * Example program from Chapter 1 Programming Spiders, Bots and Aggregators in
@@ -42,11 +44,10 @@ public class WebServer {
                 InputStream inputStream = remote.getInputStream();
                 OutputStream outputStream = remote.getOutputStream();
 
-                BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
                 PrintWriter out = new PrintWriter(remote.getOutputStream());
 
                 // Lecture de l'entête
-                String line = in.readLine();
+                String line = readLine(inputStream);
                 if (line == null || line.length() == 0) {
                     Response res = new Response(outputStream, 400);
                     res.end("Requête malformée");
@@ -65,16 +66,37 @@ public class WebServer {
                 Request req = new Request(inputStream, method, urlPathOnly, documentRoot);
 
                 // Lecture des headers
-                line = in.readLine();
-                while (line.length() > 0) {
+                line = readLine(inputStream);
+                if (line == null) {
+                    Response res = new Response(outputStream, 400);
+                    res.end("Requête malformée");
+                    remote.close();
+                    continue;
+                }
+
+                while (line != null && line.length() > 0) {
                     String[] segments = line.split(": ", 2);
                     req.addHeader(segments[0], segments[1]);
-                    line = in.readLine(); // last line will be empty
+                    line = readLine(inputStream); // last line will be empty
                 }
 
                 System.out.println(s.getInetAddress() + " " + req);
 
                 Response res = new Response(outputStream);
+
+                if (req.getUrl().endsWith(".php")) {
+                    RequestHandlers.execPHP(res, Path.of(documentRoot, req.getUrl()));
+                    res.endIfNotEnded();
+                    remote.close();
+                    continue;
+                }
+                if (req.getUrl().endsWith(".py")) {
+                    RequestHandlers.execPython(res, Path.of(documentRoot, req.getUrl()));
+                    res.endIfNotEnded();
+                    remote.close();
+                    continue;
+                }
+
                 switch (req.getMethod()) {
                     case "GET":
                         RequestHandlers.getAction(req, res);
@@ -109,6 +131,37 @@ public class WebServer {
                 System.err.println("Error: " + e);
             }
         }
+    }
+
+    private String readLine(InputStream inputStream) {
+        try {
+            int bufferSize = 256;
+            byte[] buf = new byte[bufferSize];
+            int c = inputStream.read();
+            int index = 0;
+            while (c != -1) {
+                if (c == '\r') {
+                    c = inputStream.read();
+                } else if (c == '\n') {
+                    break;
+                } else {
+                    buf[index] = (byte) c;
+                    index++;
+                    if (index >= bufferSize) {
+                        bufferSize *= 2;
+                        byte[] buf2 = new byte[bufferSize];
+                        System.arraycopy(buf2, 0, buf, 0, index);
+                        buf = buf2;
+                    }
+                    c = inputStream.read();
+                }
+            }
+
+            return new String(buf, 0, index);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

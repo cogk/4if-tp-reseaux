@@ -130,11 +130,11 @@ public class Response {
     /**
      * Cette fonction termine le Stream.
      */
-    public void end() {
+    private void end() {
         if (!ended) {
             ended = true;
             try {
-                outputStream.flush();
+                outputStream.close(); // flush aussi
             } catch (IOException e) {
                 e.printStackTrace();
             }

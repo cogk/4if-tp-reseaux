@@ -19,14 +19,16 @@ public class Headers {
      * Cette fonction permet de transformer la liste headers en chaîne de caractères lisible
      * @return La chaîne décrivant les headers
      */
-    public String toHttpString() {
-        final String CRLF = "\r\n";
-
+    public String toString() {
         StringBuilder out = new StringBuilder();
-        for (Header header : this.headers) {
-            out.append(header.toString()).append(CRLF);
+        int i = 0;
+        for (Header header : headers) {
+            if (i > 0) {
+                out.append(", ");
+            }
+            i++;
+            out.append(header.toString());
         }
-
         return out.toString();
     }
 
