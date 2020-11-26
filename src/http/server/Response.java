@@ -64,6 +64,7 @@ public class Response {
 
     /**
      * Cette fonction permet d'écrire sur le Stream d'output.
+     *
      * @param b Chaîne de bits à écrire.
      */
     public void write(byte[] b) {
@@ -73,16 +74,19 @@ public class Response {
         if (!ended) {
             try {
                 outputStream.write(b);
+                outputStream.flush();
             } catch (IOException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
+                end();
             }
-        } else {
+        } /*else {
             System.err.println("Can't write(), already ended");
-        }
+        }*/
     }
 
     /**
      * Cette fonction permet de transformer une chaîne de caractères en chaînes de bits pour l'écrire sur le Stream d'output
+     *
      * @param s Chaîne de caractères à écrire.
      */
     public void write(String s) {
@@ -91,6 +95,7 @@ public class Response {
 
     /**
      * Cette fonction permet d'écrire une chaîne de caractères et un passage à la ligne.
+     *
      * @param s Chaîne de caractères à écrire.
      */
     public void writeln(String s) {
@@ -107,6 +112,7 @@ public class Response {
 
     /**
      * Cette fonction écrit la chaîne de bits fournie puis met fin au Stream.
+     *
      * @param b Chaîne de bits à écrire.
      */
     public void end(byte[] b) {
@@ -118,6 +124,7 @@ public class Response {
 
     /**
      * Cette fonction écrit la chaîne de caractères fournie puis met fin au Stream.
+     *
      * @param s Chaîne de caractères à écrire.
      */
     public void end(String s) {
@@ -138,9 +145,9 @@ public class Response {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else {
+        } /*else {
             System.err.println("Can't end(), already ended");
-        }
+        }*/
     }
 
     /**

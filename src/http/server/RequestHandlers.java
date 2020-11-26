@@ -88,7 +88,7 @@ public class RequestHandlers {
             File file = new File(fullPath.toUri());
             BufferedOutputStream fileOut = new BufferedOutputStream(new FileOutputStream(file));
             while (inputStream.available() > 0) {
-                byte[] buffer = new byte[256];
+                byte[] buffer = new byte[65536];
                 int nRead = inputStream.read(buffer, 0, buffer.length);
                 fileOut.write(buffer, 0, nRead);
             }
@@ -122,7 +122,7 @@ public class RequestHandlers {
             File file = new File(fullPath.toUri());
             BufferedOutputStream fileOut = new BufferedOutputStream(new FileOutputStream(file, true));
             while (inputStream.available() > 0) {
-                byte[] buffer = new byte[256];
+                byte[] buffer = new byte[65536];
                 int nRead = inputStream.read(buffer, 0, buffer.length);
                 fileOut.write(buffer, 0, nRead);
             }
