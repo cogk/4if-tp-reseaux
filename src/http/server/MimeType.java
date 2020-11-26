@@ -88,11 +88,21 @@ public class MimeType {
         extensionsVersMime.put("7z", "application/x-7z-compressed");
     }
 
+    /**
+     * Cette fonction permet de renvoyer le type de ressource présente à l'adresse fournie.
+     * @param path Adresse de la ressource.
+     * @return Le type de la ressource pointée sous forme de chaîne de caractères.
+     */
     public static String getTypeForPath(Path path) {
         String ext = getExtension(path.getFileName().toString());
         return extensionsVersMime.getOrDefault(ext, "");
     }
 
+    /**
+     * Cette fonction permet d'extraire l'extension d'une ressource depuis le chemin d'accès.
+     * @param path Chemin d'accès de la ressource.
+     * @return L'extension de la ressource pointée par le chemin fourni.
+     */
     private static String getExtension(String path) {
         int i = path.lastIndexOf('.');
         if (i > 0) {
