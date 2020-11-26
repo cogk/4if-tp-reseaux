@@ -1,8 +1,6 @@
 package chat;
 
 import chat.modele.ChatManager;
-import chat.modele.ChatServer;
-import chat.udp.ChatServerUDP;
 import chat.tcp.ChatServerTCP;
 
 public class Main {
@@ -11,12 +9,11 @@ public class Main {
      *
      * @param args port
      **/
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         ChatManager chatManager = new ChatManager();
-        ChatServer chatServer;
 
-        if (args.length != 2) {
-            System.out.println("Usage: java Server <port> <udp|tcp>");
+        if (args.length != 1) {
+            System.out.println("Usage: java Server <port>");
             System.exit(1);
             return;
         }
@@ -29,17 +26,6 @@ public class Main {
             return;
         }
 
-        switch (args[1]) {
-            case "udp":
-                chatServer = new ChatServerUDP(port, chatManager);
-                break;
-            case "tcp":
-                chatServer = new ChatServerTCP(port, chatManager);
-                break;
-            default:
-                System.err.println("Usage: java Server " + port + " <udp|tcp>");
-                System.exit(1);
-                return;
-        }
+        new ChatServerTCP(port, chatManager);
     }
 }

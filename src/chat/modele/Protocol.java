@@ -48,10 +48,6 @@ public class Protocol {
         return new Rename(oldPseudo, newPseudo);
     }
 
-    public static String serializeProtocolError() {
-        return "E";
-    }
-
     public static String serializeHello(Hello hello) {
         return "H\u0000" + hello.getInitialRoom() + "\u0000" + hello.getInitialPseudo();
     }

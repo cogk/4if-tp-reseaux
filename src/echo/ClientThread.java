@@ -1,10 +1,3 @@
-/***
- * ClientThread
- * Example of a TCP chat.server
- * Date: 14/12/08
- * Authors:
- */
-
 package echo;
 
 import java.io.*;
@@ -12,7 +5,7 @@ import java.net.*;
 
 public class ClientThread extends Thread {
 
-    private Socket clientSocket;
+    private final Socket clientSocket;
 
     ClientThread(Socket s) {
         this.clientSocket = s;

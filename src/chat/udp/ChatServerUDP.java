@@ -8,11 +8,6 @@ import java.util.Enumeration;
 import java.util.List;
 
 public class ChatServerUDP implements ChatServer {
-    /**
-     * Port sur lequel le serveur écoute
-     */
-    private final int serverPort;
-    private DatagramSocket socket;
     //private MulticastSocket socket;
     private final ChatManager chatManager;
 
@@ -25,15 +20,13 @@ public class ChatServerUDP implements ChatServer {
         this.chatManager = chatManager;
         chatManager.setChatServer(this);
 
-        this.serverPort = port;
-
         try {
             // this.socket = new MulticastSocket(null);
-            this.socket = new DatagramSocket(null);
+            DatagramSocket socket = new DatagramSocket(null);
             socket.setReuseAddress(true);
             socket.setBroadcast(true);
             // socket.bind(new InetSocketAddress(InetAddress.getLocalHost(), serverPort));
-            socket.bind(new InetSocketAddress(serverPort));
+            socket.bind(new InetSocketAddress(port));
 
             System.out.println("Server ready...");
 
@@ -175,7 +168,7 @@ public class ChatServerUDP implements ChatServer {
             if (broadcast != null) {
                 int port = 5555; // le port de broadcast
                 InetAddress addr = InetAddress.getByAddress(broadcast.getAddress());
-                DatagramSocket socket = null;
+                DatagramSocket socket;
                 try {
                     socket = new DatagramSocket(null);
                     socket.setReuseAddress(false);

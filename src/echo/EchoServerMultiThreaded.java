@@ -1,10 +1,3 @@
-/***
- * EchoServer
- * Example of a TCP chat.server
- * Date: 10/01/04
- * Authors:
- */
-
 package echo;
 
 import java.net.*;
@@ -16,7 +9,7 @@ public class EchoServerMultiThreaded {
      *
      * @param args port
      **/
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         ServerSocket listenSocket;
 
         if (args.length != 1) {

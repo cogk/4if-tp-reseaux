@@ -1,10 +1,3 @@
-/***
- * EchoServer
- * Example of a TCP chat.server
- * Date: 10/01/04
- * Authors:
- */
-
 package echo;
 
 import java.io.*;
@@ -19,10 +12,8 @@ public class EchoServer {
      **/
     static void doService(Socket clientSocket) {
         try {
-            BufferedReader socIn = null;
-            socIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            BufferedReader socIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintStream socOut = new PrintStream(clientSocket.getOutputStream());
-            BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
             while (true) {
                 String line = socIn.readLine();
                 System.out.println("Recu: " + line);
@@ -38,7 +29,7 @@ public class EchoServer {
      *
      * @param args port
      **/
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         ServerSocket listenSocket;
 
         if (args.length != 1) {

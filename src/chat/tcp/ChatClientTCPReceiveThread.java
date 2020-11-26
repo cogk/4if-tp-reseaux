@@ -16,7 +16,6 @@ public class ChatClientTCPReceiveThread extends Thread {
     /**
      * Constructeur de thread de réception chat.client
      * @param socketInput Information sur la socket utilisée par le thread pour recevoir des messages
-     * @throws IOException Exception sur les IOStreams
      */
     public ChatClientTCPReceiveThread(
             BufferedReader socketInput,
@@ -34,7 +33,7 @@ public class ChatClientTCPReceiveThread extends Thread {
     }
 
     public void run() {
-        String line = null;
+        String line;
         String[] arguments;
 
         while (!shouldStop) {

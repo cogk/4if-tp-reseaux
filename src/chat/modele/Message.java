@@ -2,7 +2,6 @@ package chat.modele;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 public class Message {
 
@@ -70,9 +69,5 @@ public class Message {
         } else {
             return dateTimeFormatter.format(createdTime) + " <" + createdBy + "@" + room + ">: " + text;
         }
-    }
-
-    public String serialize() {
-        return createdBy + "\0" + DateTimeFormatter.ISO_INSTANT.format(createdTime) + "\0" + room + "\0" + text;
     }
 }

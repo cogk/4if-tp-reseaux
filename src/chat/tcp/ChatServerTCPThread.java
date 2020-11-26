@@ -1,10 +1,3 @@
-/***
- * ClientThread
- * Example of a TCP chat.server
- * Date: 14/12/08
- * Authors:
- */
-
 package chat.tcp;
 
 import chat.modele.Hello;
@@ -31,7 +24,8 @@ public class ChatServerTCPThread extends Thread {
 
     /**
      * Constructeur de thread de chat pour le client côté serveur
-     * @param s Information sur la socket utilisée pour transmettre des messages et demandes de renommage
+     *
+     * @param s           Information sur la socket utilisée pour transmettre des messages et demandes de renommage
      * @param chatManager Permet de connaître le chat manager qui gère le stockage de l'historique des messages
      */
     public ChatServerTCPThread(Socket s, ChatManager chatManager) {
@@ -66,6 +60,7 @@ public class ChatServerTCPThread extends Thread {
 
     /**
      * Cette fonction permet d'interpréter la ligne écrite par le chat.client et d'agir en fonction du type (msg : message; rename : demande de renommage)
+     *
      * @param line Ligne écrite par un chat.client
      */
     private void interpreter(String line) {
@@ -105,20 +100,18 @@ public class ChatServerTCPThread extends Thread {
     }
 
     /**
-     *
-     * @param message
+     * @param message Le message qui a été reçu
      */
     public void gotMessage(Message message) {
         String from = message.getCreatedBy();
         boolean isMyMessage = from.equals(this.clientId) && !this.clientId.startsWith("(");
-        if (!isMyMessage){
+        if (!isMyMessage) {
             socOut.println(Protocol.serializeMessage(message));
         }
     }
 
     /**
-     * Cette fonction permet d'afficher
-     * @param rename
+     * @param rename Le renommage qui a été reçu
      */
     public void gotRename(Rename rename) {
         socOut.println(Protocol.serializeRename(rename));

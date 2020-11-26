@@ -1,9 +1,6 @@
 package chat.udp;
 
-import chat.modele.Hello;
-import chat.modele.Message;
-import chat.modele.Protocol;
-import chat.modele.Rename;
+import chat.modele.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,12 +12,11 @@ public class ChatClientUDPSendThread extends Thread {
     private final DatagramSocket socket;
     private final BufferedReader terminalInput;
 
-    private String pseudo = "(anonyme)";
+    private final ChatClientState etatDuClient;
 
     private boolean shouldStop = false;
     private final InetAddress serverAddress;
     private final int serverPort;
-    private String room = "";
 
     /**
      * Constructeur de thread d'envoi chat.client
@@ -28,12 +24,14 @@ public class ChatClientUDPSendThread extends Thread {
      * @param terminalInput Terminal pour la lecture des messages
      * @param serverAddress Adresse du serveur utilisé
      * @param serverPort Port du serveur utilisé
+     * @param etatDuClient
      */
-    public ChatClientUDPSendThread(DatagramSocket socket, BufferedReader terminalInput, InetAddress serverAddress, int serverPort) {
+    public ChatClientUDPSendThread(DatagramSocket socket, BufferedReader terminalInput, InetAddress serverAddress, int serverPort, ChatClientState etatDuClient) {
         this.socket = socket;
         this.terminalInput = terminalInput;
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
+        this.etatDuClient = etatDuClient;
     }
 
     /**
@@ -54,21 +52,21 @@ public class ChatClientUDPSendThread extends Thread {
 
         System.out.println("Veuillez entrer votre pseudo :");
         try {
-            pseudo = terminalInput.readLine().trim();
+            etatDuClient.setPseudo(terminalInput.readLine().trim());
         } catch (IOException e) {
             System.out.println("* Erreur");
             return;
         }
 
         try {
-            send(Protocol.serializeHello(new Hello(room, pseudo)));
+            send(Protocol.serializeHello(new Hello(etatDuClient.getRoom(), etatDuClient.getPseudo())));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         try {
             while (!shouldStop) {
-                String line = null;
+                String line;
                 try {
                     line = terminalInput.readLine().trim();
                 } catch (IOException e) {
@@ -81,10 +79,11 @@ public class ChatClientUDPSendThread extends Thread {
                     break;
                 } else if (line.startsWith("/pseudo ")) {
                     String newPseudo = line.substring(8).replaceAll("[^a-zA-Z0-9_-]", "");
-                    send(Protocol.serializeRename(new Rename(pseudo, newPseudo)));
-                    pseudo = newPseudo;
+                    send(Protocol.serializeRename(new Rename(etatDuClient.getPseudo(), newPseudo)));
+                    etatDuClient.setPseudo(newPseudo);
                     System.out.println("Votre nouveau pseudo est <" + newPseudo + ">");
                 } else if (line.startsWith("/room ") || line.equals("/room")) {
+                    String room = etatDuClient.getRoom();
                     String newRoom = line.equals("/room") ? "" : line.substring(6).trim();
                     if (room.equals(newRoom)) {
                         System.out.println("* Commande ignorée");
@@ -95,11 +94,11 @@ public class ChatClientUDPSendThread extends Thread {
                     } else {
                         System.out.println("* Vous avez quitté #" + room + " et rejoint #" + newRoom);
                     }
-                    room = newRoom;
+                    etatDuClient.setRoom(newRoom);
                 } else {
                     if (line.length() > 0) {
                         // Il s'agit d'un message textuel
-                        Message message = new Message(pseudo, line, room);
+                        Message message = new Message(etatDuClient.getPseudo(), line, etatDuClient.getRoom());
                         System.out.println(message);
                         send(Protocol.serializeMessage(message));
                     }

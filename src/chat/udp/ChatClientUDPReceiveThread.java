@@ -1,5 +1,6 @@
 package chat.udp;
 
+import chat.modele.ChatClientState;
 import chat.modele.Message;
 import chat.modele.Protocol;
 import chat.modele.Rename;
@@ -16,9 +17,9 @@ public class ChatClientUDPReceiveThread extends Thread {
     /**
      * Constructeur de thread de réception chat.client
      * @param socket Information sur la socket utilisée par le thread pour recevoir des messages
-     * @throws IOException Exception sur les IOStreams
+     * @param etatDuClient
      */
-    public ChatClientUDPReceiveThread(DatagramSocket socket) throws IOException {
+    public ChatClientUDPReceiveThread(DatagramSocket socket, ChatClientState etatDuClient) {
         this.socket = socket;
     }
 
@@ -30,7 +31,7 @@ public class ChatClientUDPReceiveThread extends Thread {
     }
 
     public void run() {
-        String line = null;
+        String line;
         String[] arguments;
 
         byte[] buffer = new byte[1024];

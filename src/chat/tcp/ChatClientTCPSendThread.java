@@ -55,7 +55,7 @@ public class ChatClientTCPSendThread extends Thread {
         socketOutput.println(Protocol.serializeHello(new Hello(chatClientState.getRoom(), chatClientState.getPseudo())));
 
         while (!shouldStop) {
-            String line = null;
+            String line;
             try {
                 line = terminalInput.readLine().trim();
             } catch (IOException e) {

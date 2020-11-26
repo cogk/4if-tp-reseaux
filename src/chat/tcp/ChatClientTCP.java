@@ -1,9 +1,3 @@
-/***
- * EchoClient
- * Example of a TCP chat.client
- * Date: 10/01/04
- * Authors:
- */
 package chat.tcp;
 
 import chat.modele.ChatClientState;
@@ -19,7 +13,7 @@ public class ChatClientTCP {
     public static void main(String[] args) throws IOException {
         Socket socket = null;
         PrintStream socOut = null;
-        BufferedReader stdIn = null;
+        BufferedReader stdIn;
         BufferedReader socIn = null;
 
         ChatClientTCPSendThread sendThread = null;

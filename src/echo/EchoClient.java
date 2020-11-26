@@ -1,9 +1,3 @@
-/***
- * EchoClient
- * Example of a TCP chat.client
- * Date: 10/01/04
- * Authors:
- */
 package echo;
 
 import java.io.*;

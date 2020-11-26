@@ -2,7 +2,6 @@
 
 package http.server;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -43,8 +42,6 @@ public class WebServer {
                 // remote is now the connected socket
                 InputStream inputStream = remote.getInputStream();
                 OutputStream outputStream = remote.getOutputStream();
-
-                PrintWriter out = new PrintWriter(remote.getOutputStream());
 
                 // Lecture de l'entête
                 String line = readLine(inputStream);

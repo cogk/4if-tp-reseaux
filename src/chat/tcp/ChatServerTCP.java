@@ -13,8 +13,6 @@ import java.util.List;
 public class ChatServerTCP implements ChatServer {
     private final List<ChatServerTCPThread> clients = new ArrayList<>();
 
-    private final int port;
-
     /**
      * Cette fonction simule le serveur central qui gère l'échange de messages et le renommage des clients en TCP
      * @param port Port du serveur
@@ -22,8 +20,6 @@ public class ChatServerTCP implements ChatServer {
      */
     public ChatServerTCP(int port, ChatManager chatManager) {
         chatManager.setChatServer(this);
-
-        this.port = port;
 
         try {
             ServerSocket listenSocket = new ServerSocket(port);
@@ -46,8 +42,7 @@ public class ChatServerTCP implements ChatServer {
      * @param msg Information sur le message envoyé
      */
     public void pushMessage(Message msg) {
-        for (int i = 0; i < clients.size(); i++) {
-            ChatServerTCPThread ct = clients.get(i);
+        for (ChatServerTCPThread ct : clients) {
             ct.gotMessage(msg);
         }
     }
@@ -57,8 +52,7 @@ public class ChatServerTCP implements ChatServer {
      * @param rename Information sur le renommage d'un chat.client
      */
     public void pushRename(Rename rename) {
-        for (int i = 0; i < clients.size(); i++) {
-            ChatServerTCPThread ct = clients.get(i);
+        for (ChatServerTCPThread ct : clients) {
             ct.gotRename(rename);
         }
     }

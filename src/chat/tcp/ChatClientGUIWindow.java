@@ -12,14 +12,14 @@ import java.util.Random;
 
 public class ChatClientGUIWindow {
     private static final Color[] couleurs = {
-            Color.getHSBColor(0.0f/360, 100, 95),
-            Color.getHSBColor(45.0f/360, 100, 95),
-            Color.getHSBColor(90.0f/360, 100, 95),
-            Color.getHSBColor(135.0f/360, 100, 95),
-            Color.getHSBColor(180.0f/360, 100, 95),
-            Color.getHSBColor(225.0f/360, 100, 95),
-            Color.getHSBColor(270.0f/360, 100, 95),
-            Color.getHSBColor(315.0f/360, 100, 95),
+            Color.getHSBColor(0.0f/360, 0.1f, 0.99f),
+            Color.getHSBColor(45.0f/360, 0.1f, 0.99f),
+            Color.getHSBColor(90.0f/360, 0.1f, 0.99f),
+            Color.getHSBColor(135.0f/360, 0.1f, 0.99f),
+            Color.getHSBColor(180.0f/360, 0.1f, 0.99f),
+            Color.getHSBColor(225.0f/360, 0.1f, 0.99f),
+            Color.getHSBColor(270.0f/360, 0.1f, 0.99f),
+            Color.getHSBColor(315.0f/360, 0.1f, 0.99f),
     };
 
     private final TextArea textAreaHistorique;
@@ -78,9 +78,7 @@ public class ChatClientGUIWindow {
                 }
             }
         });
-        boutonEnvoyer.addActionListener((clickEvent) -> {
-            envoyer();
-        });
+        boutonEnvoyer.addActionListener((clickEvent) -> envoyer());
     }
 
     public void fermer() {

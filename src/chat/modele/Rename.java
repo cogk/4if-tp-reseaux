@@ -1,7 +1,7 @@
 package chat.modele;
 
 public class Rename {
-    private String oldPseudo;
+    private final String oldPseudo;
 
     private String newPseudo;
 

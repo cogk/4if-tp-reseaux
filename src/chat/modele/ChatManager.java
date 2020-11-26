@@ -1,9 +1,5 @@
 package chat.modele;
 
-import chat.modele.ChatServer;
-import chat.modele.Message;
-import chat.modele.Rename;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -66,10 +62,6 @@ public class ChatManager {
         chatServer.pushRename(rename);
     }
 
-    public List<Message> getMessages() {
-        return messages;
-    }
-
     public List<Message> getMessagesByRoom(String room) {
         final List<Message> filtered = new ArrayList<>();
         for (Message msg : messages) {
@@ -80,7 +72,7 @@ public class ChatManager {
         return filtered;
     }
 
-    private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter
             .ofPattern("yyyyMMdd HH:mm:ss.SSS")
             .withLocale(Locale.getDefault())
             .withZone(ZoneId.systemDefault());

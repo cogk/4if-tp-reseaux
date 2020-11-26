@@ -8,8 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
-import static java.lang.Thread.sleep;
+import java.util.Random;
 
 public class ChatClientGUI {
     /**
@@ -43,7 +42,7 @@ public class ChatClientGUI {
 
         ChatClientGUIWindow fenetre = new ChatClientGUIWindow(socOut, etatDuClient);
 
-        String line = null;
+        String line;
         String[] arguments;
 
         fenetre.appendText("Bienvenue dans l'application de chat");
@@ -52,7 +51,10 @@ public class ChatClientGUI {
         fenetre.appendText("  /quit    -- quitter l'application");
         fenetre.appendText("  /pseudo <nouveau pseudo>    -- changer votre pseudonyme");
         fenetre.appendText("  /room <nom de la salle de discussion>    -- changer de salle de discussion");
+        fenetre.appendText("  /clear    -- effacer la vue textuelle");
         fenetre.appendText("");
+
+        etatDuClient.setPseudo("AnonymeGUI" + new Random().nextInt(999));
 
         socOut.println(Protocol.serializeHello(new Hello(etatDuClient.getRoom(), etatDuClient.getPseudo())));
 

@@ -1,10 +1,6 @@
-/***
- * EchoClient
- * Example of a TCP chat.client
- * Date: 10/01/04
- * Authors:
- */
 package chat.udp;
+
+import chat.modele.ChatClientState;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,16 +12,16 @@ public class ChatClientUDP {
      * main method
      * accepts a connection, receives a message from chat.client then sends an echo to the chat.client
      **/
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         int serverPort;
         InetAddress serverAddress;
 
-        DatagramSocket receiveSocket = null;
-        DatagramSocket sendSocket = null;
-        BufferedReader stdIn = null;
+        DatagramSocket receiveSocket;
+        DatagramSocket sendSocket;
+        BufferedReader stdIn;
 
-        ChatClientUDPSendThread sendThread = null;
-        ChatClientUDPReceiveThread receiveThread = null;
+        ChatClientUDPSendThread sendThread;
+        ChatClientUDPReceiveThread receiveThread;
 
         if (args.length != 2) {
             System.out.println("Usage: java ChatClientUDP <chat.server host> <port>");
@@ -49,8 +45,10 @@ public class ChatClientUDP {
 
             stdIn = new BufferedReader(new InputStreamReader(System.in));
 
-            sendThread = new ChatClientUDPSendThread(sendSocket, stdIn, serverAddress, serverPort);
-            receiveThread = new ChatClientUDPReceiveThread(receiveSocket);
+            ChatClientState etatDuClient = new ChatClientState();
+
+            sendThread = new ChatClientUDPSendThread(sendSocket, stdIn, serverAddress, serverPort, etatDuClient);
+            receiveThread = new ChatClientUDPReceiveThread(receiveSocket, etatDuClient);
 
             sendThread.start();
             receiveThread.start();
