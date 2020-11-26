@@ -114,11 +114,11 @@ public class WebServer {
                     case "OPTIONS":
                     case "TRACE":
                     case "PATCH":
-                        res.setStatus(501);
+                        res.setStatus(Status.NotImplemented);
                         res.end("Méthode non implémentée");
                         break;
                     default:
-                        res.setStatus(400);
+                        res.setStatus(Status.BadRequest);
                         res.end("Requête malformée");
                 }
 

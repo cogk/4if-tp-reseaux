@@ -137,7 +137,10 @@ public class Response {
     /**
      * Cette fonction termine le Stream.
      */
-    private void end() {
+    public void end() {
+        if (!headersSent) {
+            writeHeaders();
+        }
         if (!ended) {
             ended = true;
             try {

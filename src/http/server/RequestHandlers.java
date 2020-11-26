@@ -13,11 +13,41 @@ public class RequestHandlers {
     public static void getAction(Request request, Response res) {
         Path fullPath = request.getAbsolutePath();
         if (Files.isDirectory(fullPath)) {
-            fullPath = Path.of(fullPath.toString(), "index.html");
+            Path indexHtmlPath = Path.of(fullPath.toString(), "index.html");
+            Path indexHtmPath = Path.of(fullPath.toString(), "index.htm");
+            Path indexPhpPath = Path.of(fullPath.toString(), "index.php");
+            if (Files.exists(indexHtmlPath)) {
+                fullPath = indexHtmlPath;
+            } else if (Files.exists(indexHtmPath)) {
+                fullPath = indexHtmPath;
+            } else if (Files.exists(indexPhpPath)) {
+                execPHP(res, indexPhpPath);
+                return;
+            } else {
+                res.setStatus(Status.Forbidden);
+                res.addHeader("Server", "TP");
+                res.end("<h1>La ressource demandée est un dossier</h1>");
+                return;
+            }
+
+            // On redirige
+            res.setStatus(Status.MovedPermanently);
+            Path relativePath = Path.of(request.getDocumentRoot()).relativize(fullPath);
+            res.addHeader("Location", relativePath.toString());
+            res.addHeader("Server", "TP");
+            res.end();
+            return;
+        }
+
+        if (!Files.exists(fullPath)) {
+            e404(res, fullPath);
+            return;
         }
 
         if (!Files.isReadable(fullPath)) {
-            e404(res, fullPath);
+            res.setStatus(Status.Forbidden);
+            res.addHeader("Server", "TP");
+            res.end("<h1>Accès interdit</h1>");
             return;
         }
 
@@ -57,7 +87,7 @@ public class RequestHandlers {
             }
             res.addHeader("Content-Length", Long.toString(contentLength));
             res.addHeader("Server", "TP");
-            res.end("");
+            res.end();
         }
     }
 
@@ -102,7 +132,7 @@ public class RequestHandlers {
 
             Path relativePath = Path.of(request.getDocumentRoot()).relativize(fullPath);
             res.addHeader("Content-Location", relativePath.toString());
-            res.end("");
+            res.end();
         } catch (IOException e) {
             e.printStackTrace();
             e500(res, fullPath, e);
@@ -160,7 +190,7 @@ public class RequestHandlers {
 
         if (deleted) {
             res.setStatus(Status.NoContent);
-            res.end("");
+            res.end();
         } else if (!existed) {
             res.setStatus(Status.NotFound);
             res.end("Ce fichier n'existe pas");
