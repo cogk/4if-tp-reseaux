@@ -2,10 +2,7 @@
 
 package http.server;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -45,6 +42,7 @@ public class WebServer {
                 Socket remote = s.accept();
                 // remote is now the connected socket
                 BufferedReader in = new BufferedReader(new InputStreamReader(remote.getInputStream()));
+                BufferedInputStream in2 = new BufferedInputStream(remote.getInputStream());
                 PrintWriter out = new PrintWriter(remote.getOutputStream());
 
                 Request req = new Request();
@@ -95,9 +93,9 @@ public class WebServer {
                     case "HEAD":
                         res = req.headAction(documentRoot);
                     case "PUT":
-                        res = req.putAction(documentRoot);
+                        res = req.putAction(in2,documentRoot);
                     case "POST":
-                        res = req.postAction(documentRoot);
+                        res = req.postAction(in2,documentRoot);
                     case "DELETE":
                         res = req.deleteAction(documentRoot);
                 }
