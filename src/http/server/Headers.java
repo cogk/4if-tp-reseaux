@@ -8,7 +8,8 @@ public class Headers {
 
     /**
      * Cette fonction permet d'ajouter un Header dans la liste
-     * @param key Nom du Header
+     *
+     * @param key   Nom du Header
      * @param value Valeur associée au Header
      */
     public void add(String key, String value) {
@@ -17,6 +18,7 @@ public class Headers {
 
     /**
      * Cette fonction permet de transformer la liste headers en chaîne de caractères lisible
+     *
      * @return La chaîne décrivant les headers
      */
     public String toString() {
@@ -30,6 +32,21 @@ public class Headers {
             out.append(header.toString());
         }
         return out.toString();
+    }
+
+    /**
+     * Renvoie le premier header associé à la clé donnée en paramètre
+     *
+     * @param key La clé dont on cherche le header
+     * @return Le Header ou null
+     */
+    public Header getByKey(String key) {
+        for (Header header : headers) {
+            if (header.getKey().equals(key)) {
+                return header;
+            }
+        }
+        return null;
     }
 
     protected List<Header> getList() {

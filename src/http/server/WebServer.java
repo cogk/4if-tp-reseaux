@@ -81,17 +81,19 @@ public class WebServer {
 
                 Response res = new Response(outputStream);
 
-                if (req.getUrl().endsWith(".php")) {
-                    RequestHandlers.execPHP(res, Path.of(documentRoot, req.getUrl()));
-                    res.endIfNotEnded();
-                    remote.close();
-                    continue;
-                }
-                if (req.getUrl().endsWith(".py")) {
-                    RequestHandlers.execPython(res, Path.of(documentRoot, req.getUrl()));
-                    res.endIfNotEnded();
-                    remote.close();
-                    continue;
+                boolean ignoreExecutable = req.getHeaders().getByKey("TP-Ignore-Executable") != null;
+                if (!ignoreExecutable) {
+                    if (req.getUrl().endsWith(".php")) {
+                        RequestHandlers.execPHP(res, Path.of(documentRoot, req.getUrl()));
+                        res.endIfNotEnded();
+                        remote.close();
+                        continue;
+                    } else if (req.getUrl().endsWith(".py")) {
+                        RequestHandlers.execPython(res, Path.of(documentRoot, req.getUrl()));
+                        res.endIfNotEnded();
+                        remote.close();
+                        continue;
+                    }
                 }
 
                 switch (req.getMethod()) {
