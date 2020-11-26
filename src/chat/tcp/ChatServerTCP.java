@@ -45,6 +45,8 @@ public class ChatServerTCP implements ChatServer {
         for (ChatServerTCPThread ct : clients) {
             ct.gotMessage(msg);
         }
+
+        clients.removeIf(ChatServerTCPThread::hasStopped);
     }
 
     /**
@@ -55,5 +57,7 @@ public class ChatServerTCP implements ChatServer {
         for (ChatServerTCPThread ct : clients) {
             ct.gotRename(rename);
         }
+
+        clients.removeIf(ChatServerTCPThread::hasStopped);
     }
 }

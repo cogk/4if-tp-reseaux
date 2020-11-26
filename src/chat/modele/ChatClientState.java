@@ -1,7 +1,7 @@
 package chat.modele;
 
 public class ChatClientState {
-    private String pseudo = "(anonyme)"; // anonyme
+    private String pseudo = ""; // anonyme
     private String room = ""; // salle principale
 
     public String getPseudo() {

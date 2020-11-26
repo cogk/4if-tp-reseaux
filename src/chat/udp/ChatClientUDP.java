@@ -13,11 +13,7 @@ public class ChatClientUDP {
      * accepts a connection, receives a message from chat.client then sends an echo to the chat.client
      **/
     public static void main(String[] args) {
-        int serverPort;
-        InetAddress serverAddress;
-
-        DatagramSocket receiveSocket;
-        DatagramSocket sendSocket;
+        MulticastSocket socket;
         BufferedReader stdIn;
 
         ChatClientUDPSendThread sendThread;
@@ -28,27 +24,25 @@ public class ChatClientUDP {
             System.exit(1);
         }
 
+        InetAddress groupAddr;
         try {
-            serverPort = Integer.parseInt(args[1]); // aussi le port de broadcast
-            serverAddress = InetAddress.getLocalHost();
+            groupAddr = InetAddress.getByName(args[0]);
+            int groupPort = Integer.parseInt(args[1]);
 
-            receiveSocket = new DatagramSocket(null);
-            receiveSocket.setReuseAddress(true);
-            receiveSocket.setBroadcast(true);
-            receiveSocket.bind(new InetSocketAddress(5555));
-            // receiveSocket.joinGroup(InetAddress.getByName("239.255.255.250"));
-            // receiveSocket.bind(new InetSocketAddress(InetAddress.getByName("::"), 5555));
-
-            sendSocket = new DatagramSocket();
-            sendSocket.setReuseAddress(true);
-            sendSocket.setBroadcast(false);
+            socket = new MulticastSocket(groupPort);
+            // socket = new MulticastSocket(null);
+            // socket.setReuseAddress(true);
+            // socket.setBroadcast(true);
+            // socket.bind(new InetSocketAddress(5555));
+            socket.joinGroup(groupAddr);
+            // socket.bind(new InetSocketAddress(InetAddress.getByName("::"), groupPort));
 
             stdIn = new BufferedReader(new InputStreamReader(System.in));
 
-            ChatClientState etatDuClient = new ChatClientState();
+            ChatClientState chatClientState = new ChatClientState();
 
-            sendThread = new ChatClientUDPSendThread(sendSocket, stdIn, serverAddress, serverPort, etatDuClient);
-            receiveThread = new ChatClientUDPReceiveThread(receiveSocket, etatDuClient);
+            sendThread = new ChatClientUDPSendThread(socket, stdIn, groupAddr, groupPort, chatClientState);
+            receiveThread = new ChatClientUDPReceiveThread(socket, chatClientState);
 
             sendThread.start();
             receiveThread.start();
@@ -65,16 +59,18 @@ public class ChatClientUDP {
 
         try {
             sendThread.join(); // on attend l'interface
-            receiveThread.endThread();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         sendThread.endThread();
         receiveThread.endThread();
-
-        sendSocket.close();
-        receiveSocket.close();
+        try {
+            socket.leaveGroup(groupAddr);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        socket.close();
     }
 }
 

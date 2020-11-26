@@ -12,26 +12,26 @@ public class ChatClientUDPSendThread extends Thread {
     private final DatagramSocket socket;
     private final BufferedReader terminalInput;
 
-    private final ChatClientState etatDuClient;
+    private final ChatClientState chatClientState;
 
     private boolean shouldStop = false;
-    private final InetAddress serverAddress;
-    private final int serverPort;
+    private final InetAddress groupAddr;
+    private final int groupPort;
 
     /**
      * Constructeur de thread d'envoi chat.client
      * @param socket Information sur la socket utilisée par le thread pour envoyer des messages
      * @param terminalInput Terminal pour la lecture des messages
-     * @param serverAddress Adresse du serveur utilisé
-     * @param serverPort Port du serveur utilisé
-     * @param etatDuClient
+     * @param groupAddr Adresse du groupe utilisé
+     * @param groupPort Port du groupe utilisé
+     * @param chatClientState
      */
-    public ChatClientUDPSendThread(DatagramSocket socket, BufferedReader terminalInput, InetAddress serverAddress, int serverPort, ChatClientState etatDuClient) {
+    public ChatClientUDPSendThread(DatagramSocket socket, BufferedReader terminalInput, InetAddress groupAddr, int groupPort, ChatClientState chatClientState) {
         this.socket = socket;
         this.terminalInput = terminalInput;
-        this.serverAddress = serverAddress;
-        this.serverPort = serverPort;
-        this.etatDuClient = etatDuClient;
+        this.groupAddr = groupAddr;
+        this.groupPort = groupPort;
+        this.chatClientState = chatClientState;
     }
 
     /**
@@ -52,14 +52,14 @@ public class ChatClientUDPSendThread extends Thread {
 
         System.out.println("Veuillez entrer votre pseudo :");
         try {
-            etatDuClient.setPseudo(terminalInput.readLine().trim());
+            chatClientState.setPseudo(terminalInput.readLine().trim());
         } catch (IOException e) {
             System.out.println("* Erreur");
             return;
         }
 
         try {
-            send(Protocol.serializeHello(new Hello(etatDuClient.getRoom(), etatDuClient.getPseudo())));
+            send(Protocol.serializeHello(new Hello(chatClientState.getRoom(), chatClientState.getPseudo())));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -76,14 +76,15 @@ public class ChatClientUDPSendThread extends Thread {
 
                 if (line.equals("/quit") || line.equals("/dc") || line.equals("/bye")) {
                     System.out.println("* Déconnexion");
+                    send(Protocol.serializeBye(new Bye(chatClientState.getPseudo(), chatClientState.getRoom())));
                     break;
                 } else if (line.startsWith("/pseudo ")) {
                     String newPseudo = line.substring(8).replaceAll("[^a-zA-Z0-9_-]", "");
-                    send(Protocol.serializeRename(new Rename(etatDuClient.getPseudo(), newPseudo)));
-                    etatDuClient.setPseudo(newPseudo);
+                    chatClientState.setPseudo(newPseudo);
                     System.out.println("Votre nouveau pseudo est <" + newPseudo + ">");
+                    send(Protocol.serializeRename(new Rename(chatClientState.getPseudo(), newPseudo)));
                 } else if (line.startsWith("/room ") || line.equals("/room")) {
-                    String room = etatDuClient.getRoom();
+                    String room = chatClientState.getRoom();
                     String newRoom = line.equals("/room") ? "" : line.substring(6).trim();
                     if (room.equals(newRoom)) {
                         System.out.println("* Commande ignorée");
@@ -94,11 +95,11 @@ public class ChatClientUDPSendThread extends Thread {
                     } else {
                         System.out.println("* Vous avez quitté #" + room + " et rejoint #" + newRoom);
                     }
-                    etatDuClient.setRoom(newRoom);
+                    chatClientState.setRoom(newRoom);
                 } else {
                     if (line.length() > 0) {
                         // Il s'agit d'un message textuel
-                        Message message = new Message(etatDuClient.getPseudo(), line, etatDuClient.getRoom());
+                        Message message = new Message(chatClientState.getPseudo(), line, chatClientState.getRoom());
                         System.out.println(message);
                         send(Protocol.serializeMessage(message));
                     }
@@ -111,7 +112,7 @@ public class ChatClientUDPSendThread extends Thread {
 
     private void send(String s) throws IOException {
         byte[] buf = s.getBytes();
-        DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddress, serverPort);
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, groupAddr, groupPort);
         socket.send(packet);
     }
 }

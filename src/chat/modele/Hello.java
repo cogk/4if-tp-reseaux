@@ -16,4 +16,13 @@ public class Hello {
     public String getInitialPseudo() {
         return initialPseudo;
     }
+
+    @Override
+    public String toString() {
+        if (initialRoom.length() == 0) {
+            return initialPseudo + " vient de rejoindre le serveur.";
+        } else {
+            return initialPseudo + " vient de rejoindre le salon #" + initialRoom + ".";
+        }
+    }
 }

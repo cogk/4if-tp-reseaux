@@ -61,13 +61,13 @@ public class ChatServerUDP implements ChatServer {
                 incomingDatagramPacket.getLength()
         );
 
-        System.out.println("> " + line.replace("\u0000", "\\0"));
+        System.out.println("> " + line.replace("\0", "\\0"));
 
         /*System.out.println(incomingDatagramPacket.getAddress()
                 + ":" + incomingDatagramPacket.getPort() + " > " + line);*/
 
         // Parse the input command
-        String[] arguments = line.split("\u0000", 2);
+        String[] arguments = line.split("\0", 2);
         String commande = arguments.length > 0 ? arguments[0] : "";
         String parametres = arguments.length > 1 ? arguments[1] : "";
 
@@ -99,7 +99,7 @@ public class ChatServerUDP implements ChatServer {
                 }
                 break;
             default:
-                System.err.println("? " + line.replace("\u0000", "\\0"));
+                System.err.println("? " + line.replace("\0", "\\0"));
         }
     }
 

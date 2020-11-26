@@ -65,7 +65,9 @@ public class ChatClientTCPSendThread extends Thread {
 
             if (line.equals("/quit") || line.equals("/dc") || line.equals("/bye")) {
                 System.out.println("* Déconnexion");
-                break;
+                Bye bye = new Bye(chatClientState.getPseudo(), chatClientState.getRoom());
+                socketOutput.println(Protocol.serializeBye(bye));
+                shouldStop = true;
             } else if (line.startsWith("/pseudo ")) {
                 String pseudo = chatClientState.getPseudo();
                 String newPseudo = line.substring(8).replaceAll("[^a-zA-Z0-9_-]", "");

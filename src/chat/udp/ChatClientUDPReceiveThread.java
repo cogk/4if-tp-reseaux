@@ -1,26 +1,28 @@
 package chat.udp;
 
-import chat.modele.ChatClientState;
-import chat.modele.Message;
-import chat.modele.Protocol;
-import chat.modele.Rename;
+import chat.modele.*;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.MulticastSocket;
 
 public class ChatClientUDPReceiveThread extends Thread {
-    private final DatagramSocket socket;
+    private final MulticastSocket socket;
+
+    private final ChatClientState chatClientState;
 
     private boolean shouldStop = false;
 
     /**
      * Constructeur de thread de réception chat.client
-     * @param socket Information sur la socket utilisée par le thread pour recevoir des messages
-     * @param etatDuClient
+     *
+     * @param socket       Information sur la socket utilisée par le thread pour recevoir des messages
+     * @param chatClientState
      */
-    public ChatClientUDPReceiveThread(DatagramSocket socket, ChatClientState etatDuClient) {
+    public ChatClientUDPReceiveThread(MulticastSocket socket, ChatClientState chatClientState) {
         this.socket = socket;
+        this.chatClientState = chatClientState;
     }
 
     /**
@@ -32,7 +34,6 @@ public class ChatClientUDPReceiveThread extends Thread {
 
     public void run() {
         String line;
-        String[] arguments;
 
         byte[] buffer = new byte[1024];
         while (!shouldStop) {
@@ -45,36 +46,19 @@ public class ChatClientUDPReceiveThread extends Thread {
                 break;
             }
 
+            if (chatClientState.getPseudo().length() == 0) {
+                continue;
+            }
+
             line = new String(
                     incomingDatagramPacket.getData(),
                     incomingDatagramPacket.getOffset(),
                     incomingDatagramPacket.getLength()
             );
 
-            // Parse the input command
-            arguments = line.split("\u0000", 2);
-
-            String commande = arguments.length > 0 ? arguments[0] : "";
-            String parametres = arguments.length > 1 ? arguments[1] : "";
-
-            switch (commande) {
-                case "M":
-                    Message message = Protocol.deserializeMessage(parametres);
-                    System.out.println(message.toString());
-                    break;
-                case "R":
-                    Rename rename = Protocol.deserializeRename(parametres);
-                    System.out.println(rename.toString());
-                    break;
-                case "E":
-                    System.err.println("Erreur de protocole");
-                    return;
-                case "D":
-                    System.err.println("Vous avez été déconnecté.e");
-                    return;
-                default:
-                    System.err.println("Commande serveur inconnue: " + line);
-                    return; // stop the thread
+            boolean shouldStopNow = ChatClientUtils.handleIncomingData(line, chatClientState, System.out::println);
+            if (shouldStopNow) {
+                shouldStop = true;
             }
         }
     }

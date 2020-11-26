@@ -1,5 +1,7 @@
 package chat.modele;
 
+import java.util.Arrays;
+
 public class Protocol {
     /**
      * Cette fonction permet de transformer un objet Message en une chaîne de caractères exploitable pour afficher le message
@@ -9,9 +11,9 @@ public class Protocol {
      */
     public static String serializeMessage(Message message) {
         return "M"
-                + "\u0000" + message.getCreatedBy()
-                + "\u0000" + message.getText()
-                + "\u0000" + message.getRoom();
+                + "\0" + message.getCreatedBy()
+                + "\0" + message.getRoom()
+                + "\0" + message.getText();
     }
 
     /**
@@ -21,8 +23,11 @@ public class Protocol {
      * @return Un objet Message contenant les informations de la chaîne fournie en entrée
      */
     public static Message deserializeMessage(String str) {
-        String[] segments = str.split("\u0000");
-        return new Message(segments[0], segments[1]);
+        String[] segments = str.split("\0", -1);
+        String createdBy = segments[0];
+        String room = segments[1];
+        String text = segments[2];
+        return new Message(createdBy, text, room);
     }
 
     /**
@@ -32,7 +37,7 @@ public class Protocol {
      * @return La chaîne de caractères constituée des informations du type rename ainsi que des pseudonymes avant et après renommage
      */
     public static String serializeRename(Rename rename) {
-        return "R" + "\u0000" + rename.getOldPseudo() + "\u0000" + rename.getNewPseudo();
+        return "R" + "\0" + rename.getOldPseudo() + "\0" + rename.getNewPseudo();
     }
 
     /**
@@ -42,20 +47,31 @@ public class Protocol {
      * @return L'objet Rename à exploiter pour changer le pseudonyme du chat.client
      */
     public static Rename deserializeRename(String str) {
-        String[] segments = str.split("\u0000");
+        String[] segments = str.split("\0", -1);
         String oldPseudo = segments[0];
         String newPseudo = segments[1];
         return new Rename(oldPseudo, newPseudo);
     }
 
     public static String serializeHello(Hello hello) {
-        return "H\u0000" + hello.getInitialRoom() + "\u0000" + hello.getInitialPseudo();
+        return "H\0" + hello.getInitialRoom() + "\0" + hello.getInitialPseudo();
     }
 
     public static Hello deserializeHello(String str) {
-        String[] segments = str.split("\u0000");
+        String[] segments = str.split("\0", -1);
         String initialRoom = segments[0];
         String initialPseudo = segments[1];
         return new Hello(initialRoom, initialPseudo);
+    }
+
+    public static String serializeBye(Bye bye) {
+        return "B\0" + bye.getPseudo() + "\0" + bye.getRoom();
+    }
+
+    public static Bye deserializeBye(String str) {
+        String[] segments = str.split("\0", -1);
+        String pseudo = segments[0];
+        String room = segments[1];
+        return new Bye(pseudo, room);
     }
 }

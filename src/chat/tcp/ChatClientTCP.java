@@ -19,7 +19,7 @@ public class ChatClientTCP {
         ChatClientTCPSendThread sendThread = null;
         ChatClientTCPReceiveThread receiveThread = null;
 
-        ChatClientState etatDuClient = new ChatClientState();
+        ChatClientState chatClientState = new ChatClientState();
 
         if (args.length != 2) {
             System.out.println("Usage: java ChatClient <chat.server host> <port>");
@@ -33,8 +33,8 @@ public class ChatClientTCP {
             socOut = new PrintStream(socket.getOutputStream());
             stdIn = new BufferedReader(new InputStreamReader(System.in));
 
-            sendThread = new ChatClientTCPSendThread(socOut, stdIn, etatDuClient);
-            receiveThread = new ChatClientTCPReceiveThread(socIn, etatDuClient);
+            sendThread = new ChatClientTCPSendThread(socOut, stdIn, chatClientState);
+            receiveThread = new ChatClientTCPReceiveThread(socIn, chatClientState);
 
             sendThread.start();
             receiveThread.start();

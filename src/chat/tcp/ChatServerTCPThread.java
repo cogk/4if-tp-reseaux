@@ -1,16 +1,13 @@
 package chat.tcp;
 
-import chat.modele.Hello;
-import chat.modele.Message;
-import chat.modele.Protocol;
-import chat.modele.Rename;
-import chat.modele.ChatManager;
+import chat.modele.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.List;
+import java.util.Random;
 
 public class ChatServerTCPThread extends Thread {
 
@@ -20,7 +17,9 @@ public class ChatServerTCPThread extends Thread {
     private BufferedReader socIn = null;
     private PrintStream socOut = null;
 
-    private String clientId = "(anonyme)";
+    private String clientId = "Client" + new Random().nextInt(999);
+
+    private boolean stopped = false;
 
     /**
      * Constructeur de thread de chat pour le client côté serveur
@@ -53,9 +52,10 @@ public class ChatServerTCPThread extends Thread {
 
             clientSocket.close();
         } catch (Exception e) {
+            System.err.println("Error in ChatClientThread: ");
             e.printStackTrace();
-            System.err.println("Error in ChatClientThread:" + e);
         }
+        stopped = true;
     }
 
     /**
@@ -65,7 +65,7 @@ public class ChatServerTCPThread extends Thread {
      */
     private void interpreter(String line) {
         // Parse the input command
-        String[] arguments = line.split("\u0000", 2);
+        String[] arguments = line.split("\0", 2);
 
         String commande = arguments.length > 0 ? arguments[0] : "";
         String parametres = arguments.length > 1 ? arguments[1] : "";
@@ -85,16 +85,19 @@ public class ChatServerTCPThread extends Thread {
             case "H":
                 Hello hello = Protocol.deserializeHello(parametres);
                 this.clientId = hello.getInitialPseudo();
+                chatManager.pushMessage(new Message("~server~", hello.toString()));
+
                 List<Message> messages = chatManager.getMessagesByRoom(hello.getInitialRoom());
                 for (Message message : messages) {
                     socOut.println(Protocol.serializeMessage(message));
                 }
-                if (!this.clientId.startsWith("(")) {
-                    chatManager.pushMessage(new Message("~server~", this.clientId + " vient d'arriver sur le serveur."));
-                }
+                break;
+            case "B":
+                Bye bye = Protocol.deserializeBye(parametres);
+                chatManager.pushMessage(new Message("~server~", bye.toString()));
                 break;
             default:
-                System.err.println("Commande client inconnue pour le serveur: " + line.replace("\u0000", "\\0"));
+                System.err.println("Commande client inconnue pour le serveur: " + line.replace("\0", "\\0"));
                 break; // stop the thread
         }
     }
@@ -103,9 +106,7 @@ public class ChatServerTCPThread extends Thread {
      * @param message Le message qui a été reçu
      */
     public void gotMessage(Message message) {
-        String from = message.getCreatedBy();
-        boolean isMyMessage = from.equals(this.clientId) && !this.clientId.startsWith("(");
-        if (!isMyMessage) {
+        if (!stopped) {
             socOut.println(Protocol.serializeMessage(message));
         }
     }
@@ -114,6 +115,12 @@ public class ChatServerTCPThread extends Thread {
      * @param rename Le renommage qui a été reçu
      */
     public void gotRename(Rename rename) {
-        socOut.println(Protocol.serializeRename(rename));
+        if (!stopped) {
+            socOut.println(Protocol.serializeRename(rename));
+        }
+    }
+
+    public boolean hasStopped() {
+        return stopped;
     }
 }

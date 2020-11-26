@@ -20,7 +20,7 @@ public class ChatClientGUI {
         PrintStream socOut = null;
         BufferedReader socIn = null;
 
-        ChatClientState etatDuClient = new ChatClientState();
+        ChatClientState chatClientState = new ChatClientState();
 
         if (args.length != 2) {
             System.out.println("Usage: java ChatClientGUI <server host> <port>");
@@ -40,7 +40,7 @@ public class ChatClientGUI {
             System.exit(2);
         }
 
-        ChatClientGUIWindow fenetre = new ChatClientGUIWindow(socOut, etatDuClient);
+        ChatClientGUIWindow fenetre = new ChatClientGUIWindow(socOut, chatClientState);
 
         String line;
         String[] arguments;
@@ -54,9 +54,9 @@ public class ChatClientGUI {
         fenetre.appendText("  /clear    -- effacer la vue textuelle");
         fenetre.appendText("");
 
-        etatDuClient.setPseudo("AnonymeGUI" + new Random().nextInt(999));
+        chatClientState.setPseudo("AnonymeGUI" + new Random().nextInt(999));
 
-        socOut.println(Protocol.serializeHello(new Hello(etatDuClient.getRoom(), etatDuClient.getPseudo())));
+        socOut.println(Protocol.serializeHello(new Hello(chatClientState.getRoom(), chatClientState.getPseudo())));
 
         while (fenetre.estOuverte()) {
             try {
@@ -70,35 +70,10 @@ public class ChatClientGUI {
                 continue;
             }
 
-            // Parse the input command
-            arguments = line.split("\0", 2);
-
-            String commande = arguments.length > 0 ? arguments[0] : "";
-            String parametres = arguments.length > 1 ? arguments[1] : "";
-
-            switch (commande) {
-                case "M":
-                    Message message = Protocol.deserializeMessage(parametres);
-                    if (etatDuClient.getRoom().equals(message.getRoom())) {
-                        fenetre.appendText(message.toString());
-                    }
-                    break;
-                case "R":
-                    Rename rename = Protocol.deserializeRename(parametres);
-                    fenetre.appendText(rename.toString());
-                    break;
-                case "E":
-                    fenetre.appendText("Erreur de protocole");
-                    fenetre.fermer();
-                    return; // quitter
-                case "D":
-                    fenetre.appendText("Vous avez été déconnecté.e");
-                    fenetre.fermer();
-                    return; // quitter
-                default:
-                    fenetre.appendText("Commande serveur inconnue: " + line);
-                    fenetre.fermer();
-                    return; // quitter
+            boolean shouldStopNow = ChatClientUtils.handleIncomingData(line, chatClientState, fenetre::appendText);
+            if (shouldStopNow) {
+                fenetre.fermer();
+                break;
             }
         }
 

@@ -96,6 +96,7 @@ public class ChatManager {
                 fw.write(0);
                 fw.write(message.getText());
                 fw.write(0);
+                fw.write('\n');
             }
             fw.close();
         }
@@ -104,7 +105,7 @@ public class ChatManager {
     public void load() throws IOException {
         File f = new File(historyFileLocation);
         if (f.canRead()) {
-            Scanner fr = new Scanner(f).useDelimiter("\0");
+            Scanner fr = new Scanner(f).useDelimiter("\0\n");
 
             messages.clear();
 

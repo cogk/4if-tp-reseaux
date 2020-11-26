@@ -83,6 +83,7 @@ public class ChatClientGUIWindow {
 
     public void fermer() {
         frame.dispose();
+        System.exit(0);
     }
 
     public boolean estOuverte() {
@@ -129,7 +130,12 @@ public class ChatClientGUIWindow {
         String pseudo = chatClientState.getPseudo();
         String room = chatClientState.getRoom();
 
-        if (line.startsWith("/pseudo ")) {
+        if (line.equals("/quit") || line.equals("/dc") || line.equals("/bye")) {
+            System.out.println("* Déconnexion");
+            Bye bye = new Bye(chatClientState.getPseudo(), chatClientState.getRoom());
+            socketOutput.println(Protocol.serializeBye(bye));
+            fermer();
+        } else if (line.startsWith("/pseudo ")) {
             String newPseudo = line.substring(8);
             socketOutput.println(Protocol.serializeRename(new Rename(pseudo, newPseudo)));
             chatClientState.setPseudo(newPseudo);
