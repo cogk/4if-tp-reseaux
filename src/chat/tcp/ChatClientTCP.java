@@ -22,7 +22,7 @@ public class ChatClientTCP {
         ChatClientState chatClientState = new ChatClientState();
 
         if (args.length != 2) {
-            System.out.println("Usage: java ChatClient <chat.server host> <port>");
+            System.out.println("Usage: java ChatClientTCP <server host> <port>");
             System.exit(1);
         }
 

@@ -63,7 +63,7 @@ public class ChatServerTCP implements ChatServer {
 
     public static void main(String[] args) {
         if (args.length != 1) {
-            System.out.println("Usage: java chat.tcp.ChatServerTCP <port>");
+            System.out.println("Usage: java ChatServerTCP <port>");
             System.exit(1);
         } else {
             try {

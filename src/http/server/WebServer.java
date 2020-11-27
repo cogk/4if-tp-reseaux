@@ -177,7 +177,7 @@ public class WebServer {
             String documentRoot = args[1];
             ws.start(port, documentRoot);
         } else {
-            System.err.println("usage: java WebServer <port> <document root path>");
+            System.err.println("Usage: java WebServer <port> <document root path>");
         }
     }
 }

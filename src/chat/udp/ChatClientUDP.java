@@ -20,7 +20,7 @@ public class ChatClientUDP {
         ChatClientUDPReceiveThread receiveThread;
 
         if (args.length != 2) {
-            System.out.println("Usage: java ChatClientUDP <chat.server host> <port>");
+            System.out.println("Usage: java ChatClientUDP <group ip> <port>");
             System.exit(1);
         }
 
