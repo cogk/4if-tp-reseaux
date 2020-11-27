@@ -1,0 +1,132 @@
+html {
+    background-color: #5a9ef0;
+    width: 100vw;
+    font-size: 18px;
+    font-family: sans-serif;
+    animation: slow-changes-bg 60s linear infinite;
+}
+
+@keyframes slow-changes-bg {
+    0% {
+        background-color: hsl(0, 50%, 50%);
+    }
+    33% {
+        background-color: hsl(120, 50%, 50%);
+    }
+    66% {
+        background-color: hsl(240, 50%, 50%);
+    }
+    100% {
+        background-color: hsl(360, 50%, 50%);
+    }
+}
+@keyframes slow-changes-border-color {
+    0% {
+        border-color: hsl(0, 20%, 50%);
+    }
+    33% {
+        border-color: hsl(120, 20%, 50%);
+    }
+    66% {
+        border-color: hsl(240, 20%, 50%);
+    }
+    100% {
+        border-color: hsl(360, 20%, 50%);
+    }
+}
+@keyframes slow-changes-color {
+    0% {
+        color: hsl(0, 20%, 50%);
+    }
+    33% {
+        color: hsl(120, 20%, 50%);
+    }
+    66% {
+        color: hsl(240, 20%, 50%);
+    }
+    100% {
+        color: hsl(360, 20%, 50%);
+    }
+}
+@keyframes slow-changes-color-complement {
+    0% {
+        color: hsl(180, 20%, 50%);
+    }
+    33% {
+        color: hsl(300, 20%, 50%);
+    }
+    66% {
+        color: hsl(60, 20%, 50%);
+    }
+    100% {
+        color: hsl(180, 20%, 50%);
+    }
+}
+
+body {
+    height: auto;
+    margin: 16px;
+    padding: 16px;
+    margin-top: 36px;
+    margin-bottom: 30vh;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4);
+}
+@media (min-width: 1000px) {
+    body {
+        max-width: 60vw;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+algo {
+    display: block;
+    height: auto;
+    margin: 16px auto;
+    padding: 0px 8px;
+    background-color: #eee;
+    line-break: break-all;
+    white-space: pre-wrap;
+    border-radius: 2px;
+}
+algo h4 {
+    margin: 0;
+    margin-bottom: -8px;
+    text-decoration: underline;
+    font-weight: inherit;
+}
+algo em {
+    color: #c27;
+    animation: slow-changes-color 60s linear infinite;
+}
+algo strong {
+}
+algo u {
+    color: #c27;
+    animation: slow-changes-color-complement 60s linear infinite;
+}
+
+input[type="number"] {
+    width: 7ch;
+}
+input {
+    font-size: 20px;
+    margin-bottom: 10px;
+    display: inline-block;
+    vertical-align: middle;
+    background-color: white;
+    border: 1px solid #bbf;
+    animation: slow-changes-border-color 60s linear infinite;
+    border-radius: 2px;
+}
+input[name="a"] {
+    text-align: right;
+}
+input[name="b"] {
+    text-align: right;
+}
+input[name="c"] {
+    text-align: left;
+}
