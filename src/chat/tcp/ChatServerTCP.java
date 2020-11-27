@@ -60,4 +60,19 @@ public class ChatServerTCP implements ChatServer {
 
         clients.removeIf(ChatServerTCPThread::hasStopped);
     }
+
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            System.out.println("Usage: java chat.tcp.ChatServerTCP <port>");
+            System.exit(1);
+        } else {
+            try {
+                int port = Integer.parseInt(args[0]);
+                ChatManager chatManager = new ChatManager();
+                new ChatServerTCP(port, chatManager);
+            } catch (Exception e) {
+                System.err.println("port invalide");
+            }
+        }
+    }
 }
