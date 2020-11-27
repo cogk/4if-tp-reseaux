@@ -31,7 +31,7 @@ public class Protocol {
     }
 
     /**
-     * Cette fonction transforme un objet Rename en uen chaîne de caractères équivalente
+     * Cette fonction transforme un objet Rename en une chaîne de caractères équivalente
      *
      * @param rename Contient la demande de renommage d'un chat.client
      * @return La chaîne de caractères constituée des informations du type rename ainsi que des pseudonymes avant et après renommage
@@ -53,10 +53,22 @@ public class Protocol {
         return new Rename(oldPseudo, newPseudo);
     }
 
+    /**
+     * Cette fonction transforme un objet Hello en une chaîne de caractères équivalente
+     *
+     * @param hello Contient le message de connexion d'un chat.client
+     * @return La chaîne de caractères constituée des informations du message de connexion
+     */
     public static String serializeHello(Hello hello) {
         return "H\0" + hello.getInitialRoom() + "\0" + hello.getInitialPseudo();
     }
 
+    /**
+     * Cette fonction transforme une chaine de caractères représentant une connexion en l'objet Hello correspondant
+     *
+     * @param str La chaîne écrite par le chat.client pour annoncer la connexion d'un client
+     * @return L'objet Hello à exploiter pour indiquer la connexion d'un client
+     */
     public static Hello deserializeHello(String str) {
         String[] segments = str.split("\0", -1);
         String initialRoom = segments[0];
@@ -64,10 +76,22 @@ public class Protocol {
         return new Hello(initialRoom, initialPseudo);
     }
 
+    /**
+     * Cette fonction transforme un objet Bye en une chaîne de caractères équivalente
+     *
+     * @param bye Contient le message de déconnexion d'un chat.client
+     * @return La chaîne de caractères constituée des informations du message de déconnexion
+     */
     public static String serializeBye(Bye bye) {
         return "B\0" + bye.getPseudo() + "\0" + bye.getRoom();
     }
 
+    /**
+     * Cette fonction transforme une chaine de caractères représentant une déconnexion en l'objet Bye correspondant
+     *
+     * @param str La chaîne écrite par le chat.client pour annoncer la déconnexion d'un client
+     * @return L'objet Bye à exploiter pour indiquer la déconnexion d'un client
+     */
     public static Bye deserializeBye(String str) {
         String[] segments = str.split("\0", -1);
         String pseudo = segments[0];

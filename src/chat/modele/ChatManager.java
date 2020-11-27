@@ -48,6 +48,10 @@ public class ChatManager {
         this.chatServer = chatServer;
     }
 
+    /**
+     * Ajoute un message dans l'historique et l'ajoute également au fichier texte représentant cet historique
+     * @param msg Message à ajouter
+     */
     public void pushMessage(Message msg) {
         messages.add(msg);
         chatServer.pushMessage(msg);
@@ -58,10 +62,19 @@ public class ChatManager {
         }
     }
 
+    /**
+     * Envoie une demande de rename au serveur
+     * @param rename Demande de rename
+     */
     public void pushRename(Rename rename) {
         chatServer.pushRename(rename);
     }
 
+    /**
+     * Renvoie la liste des messages correspondant à un salon donné
+     * @param room Salon dont on veut récupérer les messages
+     * @return Liste des messages du salon
+     */
     public List<Message> getMessagesByRoom(String room) {
         final List<Message> filtered = new ArrayList<>();
         for (Message msg : messages) {
@@ -77,6 +90,10 @@ public class ChatManager {
             .withLocale(Locale.getDefault())
             .withZone(ZoneId.systemDefault());
 
+    /**
+     * Permet d'enregistrer l'historique dans un fichier texte, ou de le créer s'il n'existe pas encore
+     * @throws IOException Erreur lors de la sortie des messages vers le fichier texte
+     */
     public void persist() throws IOException {
         File f = new File(historyFileLocation);
         if (!f.exists()) {
@@ -102,6 +119,10 @@ public class ChatManager {
         }
     }
 
+    /**
+     * Charge l'historique des messages présent dans le fichier texte qui sert d'historique
+     * @throws IOException Erreur lors de la lecture des messages dans l'historique
+     */
     public void load() throws IOException {
         File f = new File(historyFileLocation);
         if (f.canRead()) {

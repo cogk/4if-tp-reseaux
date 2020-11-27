@@ -38,6 +38,13 @@ public class Message {
         this.createdTime = LocalDateTime.now();
     }
 
+    /**
+     * Constructeur de Message pour un canal spécifique avec une heure précisée pour le message
+     * @param from Indique le chat.client qui a écrit le message
+     * @param text Message écrit par le chat.client
+     * @param room Indique le nom de la room dans laquelle le message doit apparaître
+     * @param createdTime Indique la date et l'heure du message
+     */
     public Message(String from, String text, String room, LocalDateTime createdTime) {
         this.createdBy = from;
         this.text = text;

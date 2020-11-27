@@ -81,15 +81,25 @@ public class ChatClientGUIWindow {
         boutonEnvoyer.addActionListener((clickEvent) -> envoyer());
     }
 
+    /**
+     * Ferme la fenêtre
+     */
     public void fermer() {
         frame.dispose();
         System.exit(0);
     }
 
+    /**
+     * Renvoie un booléen indiquant si la fenêtre est ouverte
+     * @return true si la fenêtre est ouverte, false sinon
+     */
     public boolean estOuverte() {
         return frame.isVisible();
     }
 
+    /**
+     * Permet de redimensionner la fenêtre
+     */
     private void recalculerTailles() {
         final int W = frame.getWidth();
         final int H = frame.getHeight();
@@ -115,10 +125,17 @@ public class ChatClientGUIWindow {
         boutonEnvoyer.setBounds(insets.left + largeur - largeurBouton - windowPadding, insets.top + hauteur - insets.bottom - hauteurBouton - windowPadding, largeurBouton, hauteurBouton);
     }
 
+    /**
+     * Ajoute du texte à la vue graphique
+     * @param t Texte à ajouter
+     */
     public void appendText(String t) {
         textAreaHistorique.setText(textAreaHistorique.getText() + t + "\n");
     }
 
+    /**
+     * Envoie ce qui est écrit dans la zone de saisie sur le socket
+     */
     private void envoyer() {
         String line = entreeTextuelle.getText().trim(); // on récupère le texte entré
         if (line.length() == 0) {

@@ -110,6 +110,11 @@ public class ChatClientUDPSendThread extends Thread {
         }
     }
 
+    /**
+     * Envoie un message sur la socket
+     * @param s Message à envoyer
+     * @throws IOException Erreur lors de l'envoi
+     */
     private void send(String s) throws IOException {
         byte[] buf = s.getBytes();
         DatagramPacket packet = new DatagramPacket(buf, buf.length, groupAddr, groupPort);
