@@ -79,10 +79,11 @@ public class ChatClientUDPSendThread extends Thread {
                     send(Protocol.serializeBye(new Bye(chatClientState.getPseudo(), chatClientState.getRoom())));
                     break;
                 } else if (line.startsWith("/pseudo ")) {
+                    String oldPseudo = chatClientState.getPseudo();
                     String newPseudo = line.substring(8).replaceAll("[^a-zA-Z0-9_-]", "");
                     chatClientState.setPseudo(newPseudo);
                     System.out.println("Votre nouveau pseudo est <" + newPseudo + ">");
-                    send(Protocol.serializeRename(new Rename(chatClientState.getPseudo(), newPseudo)));
+                    send(Protocol.serializeRename(new Rename(oldPseudo, newPseudo)));
                 } else if (line.startsWith("/room ") || line.equals("/room")) {
                     String room = chatClientState.getRoom();
                     String newRoom = line.equals("/room") ? "" : line.substring(6).trim();
