@@ -59,8 +59,9 @@ public class WebServer {
 
                 int indexOfQuestionMark = url.indexOf('?');
                 String urlPathOnly = indexOfQuestionMark == -1 ? url : url.substring(0, indexOfQuestionMark);
+                String queryString = indexOfQuestionMark == -1 || (url.length() <= indexOfQuestionMark + 1) ? "" : url.substring(indexOfQuestionMark + 1);
 
-                Request req = new Request(inputStream, method, urlPathOnly, documentRoot);
+                Request req = new Request(inputStream, method, urlPathOnly, documentRoot, queryString);
 
                 // Lecture des headers
                 line = readLine(inputStream);
@@ -84,12 +85,12 @@ public class WebServer {
                 boolean ignoreExecutable = req.getHeaders().getByKey("TP-Ignore-Executable") != null;
                 if (!ignoreExecutable) {
                     if (req.getUrl().endsWith(".php")) {
-                        RequestHandlers.execPHP(res, Path.of(documentRoot, req.getUrl()));
+                        RequestHandlers.execPHP(req, res, Path.of(documentRoot, req.getUrl()));
                         res.endIfNotEnded();
                         remote.close();
                         continue;
                     } else if (req.getUrl().endsWith(".py")) {
-                        RequestHandlers.execPython(res, Path.of(documentRoot, req.getUrl()));
+                        RequestHandlers.execPython(req, res, Path.of(documentRoot, req.getUrl()));
                         res.endIfNotEnded();
                         remote.close();
                         continue;

@@ -3,12 +3,14 @@ package http.server;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 public class RequestHandlers {
     /**
      * Cette fonction permet d'effectuer l'action correspondant à la méthode GET HTTP.
+     *
      * @param request Contient les informations de la requête GET que l'on veut effectuer.
-     * @param res Réponse à remplir en fonction du déroulement de l'action de la requpete GET.
+     * @param res     Réponse à remplir en fonction du déroulement de l'action de la requpete GET.
      */
     public static void getAction(Request request, Response res) {
         Path fullPath = request.getAbsolutePath();
@@ -21,7 +23,7 @@ public class RequestHandlers {
             } else if (Files.exists(indexHtmPath)) {
                 fullPath = indexHtmPath;
             } else if (Files.exists(indexPhpPath)) {
-                execPHP(res, indexPhpPath);
+                execPHP(request, res, indexPhpPath);
                 return;
             } else {
                 res.setStatus(Status.Forbidden);
@@ -69,8 +71,9 @@ public class RequestHandlers {
 
     /**
      * Cette fonction permet d'effectuer l'action correspondant à la méthode HEAD HTTP.
+     *
      * @param request Contient les informations de la requête HEAD que l'on veut effectuer.
-     * @param res Réponse à remplir en fonction du déroulement de l'action de la requpete HEAD.
+     * @param res     Réponse à remplir en fonction du déroulement de l'action de la requpete HEAD.
      */
     public static void headAction(Request request, Response res) {
         Path fullPath = request.getAbsolutePath();
@@ -93,8 +96,9 @@ public class RequestHandlers {
 
     /**
      * Cette fonction permet d'effectuer l'action correspondant à la méthode PUT HTTP.
+     *
      * @param request Contient les informations de la requête PUT que l'on veut effectuer.
-     * @param res Réponse à remplir en fonction du déroulement de l'action de la requpete PUT.
+     * @param res     Réponse à remplir en fonction du déroulement de l'action de la requpete PUT.
      */
     public static void putAction(Request request, Response res) {
         Path fullPath = request.getAbsolutePath();
@@ -141,8 +145,9 @@ public class RequestHandlers {
 
     /**
      * Cette fonction permet d'effectuer l'action correspondant à la méthode POST HTTP.
+     *
      * @param request Contient les informations de la requête POST que l'on veut effectuer.
-     * @param res Réponse à remplir en fonction du déroulement de l'action de la requpete POST.
+     * @param res     Réponse à remplir en fonction du déroulement de l'action de la requpete POST.
      */
     public static void postAction(Request request, Response res) {
         Path fullPath = request.getAbsolutePath();
@@ -175,8 +180,9 @@ public class RequestHandlers {
 
     /**
      * Cette fonction permet d'effectuer l'action correspondant à la méthode DELETE HTTP.
+     *
      * @param request Contient les informations de la requête DELETE que l'on veut effectuer.
-     * @param res Réponse à remplir en fonction du déroulement de l'action de la requpete DELETE.
+     * @param res     Réponse à remplir en fonction du déroulement de l'action de la requpete DELETE.
      */
     public static void deleteAction(Request request, Response res) {
         Path fullPath = request.getAbsolutePath();
@@ -202,7 +208,8 @@ public class RequestHandlers {
 
     /**
      * Cette fonction permet l'affichage en cas d'erreur de fichier non trouvé (404).
-     * @param res Réponse à remplir avec les informations de l'erreur.
+     *
+     * @param res      Réponse à remplir avec les informations de l'erreur.
      * @param fullPath Chemin complet de la ressource demandée.
      */
     private static void e404(Response res, Path fullPath) {
@@ -215,9 +222,10 @@ public class RequestHandlers {
 
     /**
      * Cette fonction permet l'affichage en cas d'erreur d'erreur interne au serveur (500).
-     * @param res Réponse à remplir avec les informations de l'erreur.
+     *
+     * @param res      Réponse à remplir avec les informations de l'erreur.
      * @param fullPath Chemin complet de la ressource demandée.
-     * @param e Contient l'exception trouvée.
+     * @param e        Contient l'exception trouvée.
      */
     private static void e500(Response res, Path fullPath, Exception e) {
         String html = "<h1>Erreur interne</h1><pre>" + e.toString() + "</pre>";
@@ -228,19 +236,31 @@ public class RequestHandlers {
         res.end(html);
     }
 
-    public static void execPHP(Response res, Path pathToScript) {
-        execCommand(res, "php", pathToScript);
+    public static void execPHP(Request req, Response res, Path pathToScript) {
+        execCommand(req, res, "php", pathToScript);
     }
 
-    public static void execPython(Response res, Path pathToScript) {
-        execCommand(res, "python3", pathToScript);
+    public static void execPython(Request req, Response res, Path pathToScript) {
+        execCommand(req, res, "python3", pathToScript);
     }
 
-    public static void execCommand(Response res, String command, Path pathToScript) {
+    public static void execCommand(Request req, Response res, String command, Path pathToScript) {
         System.out.println("Running executable " + command + " " + pathToScript);
         try {
-            String chemin = pathToScript.toAbsolutePath().toString();
-            Process p = Runtime.getRuntime().exec(command + " " + chemin);
+            String chemin = pathToScript.toString();
+
+            ProcessBuilder pb;
+            if (command.equals("php")) {
+                String path = pathToScript.toString().replace("\"", "\\\"");
+                String qs = req.getQueryString().replace("'", "\\'");
+                pb = new ProcessBuilder("php", "-e", "-r",
+                        "parse_str('" + qs + "', $_GET); require_once(\"" + path +"\");");
+                pb.directory(new File(req.getDocumentRoot()));
+                res.addHeader("Content-Type", "text/html");
+            } else {
+                pb = new ProcessBuilder(command, chemin);
+            }
+            Process p = pb.start();
 
             OutputStream stdinStream = p.getOutputStream(); // stdin
             stdinStream.flush();
@@ -266,23 +286,22 @@ public class RequestHandlers {
             }
             errorStream.close();
 
-
             String error = errorStringBuilder.toString();
-            if (error.length() > 0) {
+            String output = outputStringBuilder.toString();
+
+            if (error.length() > 0 && output.length() > 0) {
+                res.setStatus(Status.InternalServerError);
+                res.end(output + "\n" + error);
+            } else if (error.length() > 0) {
                 res.setStatus(Status.InternalServerError);
                 res.end(error);
-                return;
-            }
-
-            String output = outputStringBuilder.toString();
-            if (output.length() > 0) {
+            } else if (output.length() > 0) {
                 res.setStatus(Status.OK);
                 res.end(output);
-                return;
+            } else {
+                res.setStatus(Status.NoContent);
+                res.end(output);
             }
-
-            res.setStatus(Status.NoContent);
-            res.end(output);
         } catch (Exception err) {
             err.printStackTrace();
         }

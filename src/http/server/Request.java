@@ -14,12 +14,15 @@ public class Request {
 
     private final Headers headers = new Headers();
 
+    private final String queryString;
+
     // Constructor
-    public Request(InputStream inputStream, String method, String url, String documentRoot) {
+    public Request(InputStream inputStream, String method, String url, String documentRoot, String queryString) {
         this.inputStream = inputStream;
         this.method = method;
         this.url = url;
         this.documentRoot = documentRoot;
+        this.queryString = queryString;
     }
 
     // Getters/Setters
@@ -41,6 +44,10 @@ public class Request {
 
     public String getDocumentRoot() {
         return documentRoot;
+    }
+
+    public String getQueryString() {
+        return queryString;
     }
 
     @Override
