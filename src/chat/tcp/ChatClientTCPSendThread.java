@@ -17,6 +17,7 @@ public class ChatClientTCPSendThread extends Thread {
      * Constructeur de thread d'envoi chat.client
      * @param socketOutput Information sur la socket utilisée par le thread pour envoyer des messages
      * @param terminalInput Terminal pour la lecture des messages
+     * @param chatClientState Etat du chat client
      */
     public ChatClientTCPSendThread(
             PrintStream socketOutput,

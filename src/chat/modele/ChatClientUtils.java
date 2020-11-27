@@ -2,8 +2,9 @@ package chat.modele;
 
 public class ChatClientUtils {
     /**
-     * @param line            Les données reçues à analyser
+     * @param line Les données reçues à analyser
      * @param chatClientState L'état du client de messagerie
+     * @param callback Texte de rappel
      * @return Renvoie true si le thread doit s'arrêter.
      */
     public static boolean handleIncomingData(String line, ChatClientState chatClientState, StringCallback callback) {

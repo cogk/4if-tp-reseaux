@@ -24,7 +24,7 @@ public class ChatClientUDPSendThread extends Thread {
      * @param terminalInput Terminal pour la lecture des messages
      * @param groupAddr Adresse du groupe utilisé
      * @param groupPort Port du groupe utilisé
-     * @param chatClientState
+     * @param chatClientState Etat du chat client
      */
     public ChatClientUDPSendThread(DatagramSocket socket, BufferedReader terminalInput, InetAddress groupAddr, int groupPort, ChatClientState chatClientState) {
         this.socket = socket;

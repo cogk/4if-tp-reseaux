@@ -17,8 +17,8 @@ public class ChatClientUDPReceiveThread extends Thread {
     /**
      * Constructeur de thread de réception chat.client
      *
-     * @param socket       Information sur la socket utilisée par le thread pour recevoir des messages
-     * @param chatClientState
+     * @param socket Information sur la socket utilisée par le thread pour recevoir des messages
+     * @param chatClientState Etat du chat client
      */
     public ChatClientUDPReceiveThread(MulticastSocket socket, ChatClientState chatClientState) {
         this.socket = socket;
