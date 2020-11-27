@@ -28,6 +28,7 @@ public class RequestHandlers {
             } else {
                 res.setStatus(Status.Forbidden);
                 res.addHeader("Server", "TP");
+                res.addHeader("Content-Type", "text/html; charset=utf-8");
                 res.end("<h1>La ressource demandée est un dossier</h1>");
                 return;
             }
@@ -49,6 +50,7 @@ public class RequestHandlers {
         if (!Files.isReadable(fullPath)) {
             res.setStatus(Status.Forbidden);
             res.addHeader("Server", "TP");
+            res.addHeader("Content-Type", "text/html; charset=utf-8");
             res.end("<h1>Accès interdit</h1>");
             return;
         }
@@ -63,7 +65,11 @@ public class RequestHandlers {
 
         int status = contents.length == 0 ? Status.NoContent : Status.OK;
         res.setStatus(status);
-        res.addHeader("Content-Type", MimeType.getTypeForPath(fullPath));
+        String mimeType = MimeType.getTypeForPath(fullPath);
+        if (mimeType.startsWith("text/")) {
+            mimeType += "; charset=utf-8";
+        }
+        res.addHeader("Content-Type", mimeType);
         res.addHeader("Content-Length", Integer.toString(contents.length));
         res.addHeader("Server", "TP");
         res.end(contents);
@@ -216,7 +222,7 @@ public class RequestHandlers {
         String html = "<h1>Fichier non trouvé</h1>";
         System.err.println("404 " + fullPath);
         res.setStatus(Status.NotFound);
-        res.addHeader("Content-Type", "text/html");
+        res.addHeader("Content-Type", "text/html; charset=utf-8");
         res.end(html);
     }
 
@@ -232,7 +238,7 @@ public class RequestHandlers {
         System.err.println("500 " + fullPath);
         e.printStackTrace();
         res.setStatus(Status.InternalServerError);
-        res.addHeader("Content-Type", "text/html");
+        res.addHeader("Content-Type", "text/html; charset=utf-8");
         res.end(html);
     }
 
