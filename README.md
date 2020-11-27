@@ -115,7 +115,8 @@ curl -X HEAD localhost/lorem.txt # ne pas faire ça
 ### GET sur fichier illisible (permissions)
 
 ```sh
-curl localhost/inaccessible
+chmod 000 racine/du/serveur/inaccessible
+curl -i localhost/inaccessible
 ```
 
 ### DELETE
