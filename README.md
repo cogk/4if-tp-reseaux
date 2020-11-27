@@ -7,19 +7,19 @@
 #### 1. Lancer le serveur
 
 ```sh
-java chat.Main 4444
+java -jar lib/chat-tcp-server.jar 4444
 ```
 
 #### 2. Lancer un client texte
 
 ```sh
-java chat.tcp.ChatClientTCP 127.0.0.1 4444
+java -jar lib/chat-tcp-client.jar 127.0.0.1 4444
 ```
 
 #### 3. Lancer un client graphique
 
 ```sh
-java chat.tcp.ChatClientGUI 127.0.0.1 4444
+java -jar lib/chat-tcp-clientgui.jar 127.0.0.1 4444
 ```
 
 ### UDP
@@ -27,7 +27,7 @@ java chat.tcp.ChatClientGUI 127.0.0.1 4444
 Pas de serveur dans la version UDP, donc pas d'historique.
 
 ```sh
-java chat.udp.ChatClientUDP 228.5.6.7 5555
+java -jar lib/chat-udp-client.jar 228.5.6.7 5555
 ```
 
 ### Fonctionnalités communes
@@ -49,7 +49,7 @@ java chat.udp.ChatClientUDP 228.5.6.7 5555
 ## Lancer le serveur
 
 ```sh
-java http.server.WebServer <port> <chemin/complet/vers/le/dossier/racine>
+java -jar lib/http-server.jar 80 test-serveur/
 ```
 
 -   Le dossier racine correspond au dossier qui contient tous les fichiers à servir.
